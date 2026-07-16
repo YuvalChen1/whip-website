@@ -219,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const gravity = 0.15;
   const friction = 0.88;
   const crackCooldownTime = 1000; // 1-second crack cooldown (locks excessive sounds)
+  const ropeConfig = { length: 50, width: 2.5 };
 
   // --- Global Custom Cursor ---
   const globalCursor = document.getElementById('global-cursor');
@@ -987,6 +988,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function checkMockupBubbleCollision(tipX, tipY) {
+    if (!chatBody) return;
     const targets = chatBody.querySelectorAll('.ai-bubble-target');
     targets.forEach(target => {
       const rect = target.getBoundingClientRect();
@@ -1023,6 +1025,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Local sandbox sizing state variables
   let localPts = [];
   let localPrv = [];
+  const localNumPoints = 12;
   let localConfig = { length: 50, width: 3.0, size: 80 };
   let localTilt = 0;
   let localLastCrackTime = 0;
