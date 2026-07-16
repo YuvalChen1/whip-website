@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0a0820"/>
+      <stop offset="100%" stop-color="#040310"/>
+    </radialGradient>
+    <linearGradient id="trophy" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#fff0a0"/>
+      <stop offset="40%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#b8860b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#ffd700" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shine">
+      <feGaussianBlur stdDeviation="1.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#bg)" stroke="#221144" stroke-width="1.5"/>
+  <!-- Stars around trophy -->
+  <circle cx="12" cy="14" r="1.5" fill="#ffd700" opacity="0.7"/>
+  <circle cx="52" cy="14" r="1" fill="#ffd700" opacity="0.6"/>
+  <circle cx="8" cy="32" r="1" fill="#ffd700" opacity="0.5"/>
+  <circle cx="56" cy="32" r="1" fill="#ffd700" opacity="0.5"/>
+  <path d="M10 20 L11 23 L14 20 L11 17Z" fill="#ffd700" opacity="0.6"/>
+  <path d="M54 20 L55 23 L58 20 L55 17Z" fill="#ffd700" opacity="0.5"/>
+  <!-- Glow -->
+  <circle cx="32" cy="30" r="20" fill="url(#glow)"/>
+  <!-- Trophy cup -->
+  <path d="M20 12 L44 12 L42 30 C42 36, 38 40, 32 40 C26 40, 22 36, 22 30 Z" fill="url(#trophy)" stroke="#b8860b" stroke-width="1.5"/>
+  <!-- Trophy handles -->
+  <path d="M20 14 C14 14, 12 18, 14 22 C16 26, 20 24, 22 22" stroke="url(#trophy)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M44 14 C50 14, 52 18, 50 22 C48 26, 44 24, 42 22" stroke="url(#trophy)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Trophy inner shine -->
+  <ellipse cx="28" cy="20" rx="5" ry="8" fill="white" opacity="0.18" transform="rotate(-10 28 20)"/>
+  <!-- Trophy base stem -->
+  <rect x="29" y="40" width="6" height="6" rx="1" fill="url(#trophy)" stroke="#b8860b" stroke-width="1"/>
+  <!-- Trophy base -->
+  <rect x="22" y="46" width="20" height="5" rx="2.5" fill="url(#trophy)" stroke="#b8860b" stroke-width="1.5"/>
+  <!-- Star on trophy cup -->
+  <polygon points="32,16 33.5,20.5 38,20.5 34.5,23.5 35.8,28 32,25 28.2,28 29.5,23.5 26,20.5 30.5,20.5" fill="white" opacity="0.8" filter="url(#shine)"/>
+</svg>

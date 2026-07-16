@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1a0000"/>
+      <stop offset="100%" stop-color="#0a0000"/>
+    </radialGradient>
+    <radialGradient id="dropGrad" cx="38%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#ff4455"/>
+      <stop offset="50%" stop-color="#cc1122"/>
+      <stop offset="100%" stop-color="#660008"/>
+    </radialGradient>
+    <radialGradient id="highlight" cx="35%" cy="28%" r="30%">
+      <stop offset="0%" stop-color="#ff99aa" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#ff99aa" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Background -->
+  <circle cx="32" cy="32" r="31" fill="url(#bg)" stroke="#440008" stroke-width="1.5"/>
+  <!-- Blood splatter dots -->
+  <circle cx="18" cy="16" r="2" fill="#880010" opacity="0.6"/>
+  <circle cx="48" cy="14" r="1.5" fill="#880010" opacity="0.4"/>
+  <circle cx="50" cy="22" r="1" fill="#880010" opacity="0.5"/>
+  <circle cx="14" cy="28" r="1.5" fill="#880010" opacity="0.4"/>
+  <!-- Blood drop main shape (teardrop) -->
+  <path d="M32 12 C32 12, 46 28, 46 38 C46 47, 39.8 53, 32 53 C24.2 53, 18 47, 18 38 C18 28, 32 12, 32 12Z" fill="url(#dropGrad)"/>
+  <!-- Highlight -->
+  <path d="M32 12 C32 12, 46 28, 46 38 C46 47, 39.8 53, 32 53 C24.2 53, 18 47, 18 38 C18 28, 32 12, 32 12Z" fill="url(#highlight)"/>
+  <!-- Inner shine -->
+  <ellipse cx="27" cy="30" rx="5" ry="8" fill="white" opacity="0.18" transform="rotate(-15 27 30)"/>
+  <!-- Tiny drip at bottom -->
+  <path d="M32 53 C32 53, 30 56, 32 58 C34 56, 32 53, 32 53Z" fill="#880010" opacity="0.7"/>
+  <!-- Drip streak on the side -->
+  <path d="M22 40 C21 44, 22 48, 23 50" stroke="#880010" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+</svg>

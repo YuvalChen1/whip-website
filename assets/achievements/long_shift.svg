@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#020210"/>
+      <stop offset="100%" stop-color="#010108"/>
+    </radialGradient>
+    <radialGradient id="moon" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#ffffcc"/>
+      <stop offset="60%" stop-color="#ddcc88"/>
+      <stop offset="100%" stop-color="#aa9944"/>
+    </radialGradient>
+    <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffaa" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ffffaa" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#bg)" stroke="#111122" stroke-width="1.5"/>
+  <!-- Stars -->
+  <circle cx="14" cy="12" r="1.2" fill="white" opacity="0.9"/>
+  <circle cx="48" cy="10" r="1.5" fill="white" opacity="0.8"/>
+  <circle cx="56" cy="24" r="1" fill="white" opacity="0.7"/>
+  <circle cx="8" cy="32" r="1" fill="white" opacity="0.6"/>
+  <circle cx="22" cy="8" r="0.8" fill="white" opacity="0.8"/>
+  <circle cx="36" cy="6" r="1.2" fill="white" opacity="0.7"/>
+  <circle cx="54" cy="40" r="0.8" fill="white" opacity="0.5"/>
+  <circle cx="10" cy="48" r="1" fill="white" opacity="0.6"/>
+  <circle cx="44" cy="52" r="0.7" fill="white" opacity="0.5"/>
+  <!-- Star twinkles (4-pointed) -->
+  <path d="M50 16 L51 19 L54 16 L51 13 Z" fill="white" opacity="0.7"/>
+  <path d="M18 44 L19 47 L22 44 L19 41 Z" fill="white" opacity="0.5"/>
+  <!-- Moon glow -->
+  <circle cx="34" cy="30" r="18" fill="url(#moonGlow)"/>
+  <!-- Crescent moon -->
+  <circle cx="34" cy="30" r="16" fill="url(#moon)"/>
+  <!-- Cutout to make crescent -->
+  <circle cx="40" cy="26" r="13" fill="url(#bg)"/>
+  <!-- Coffee cup silhouette (working the long shift) -->
+  <path d="M22 50 L24 56 L34 56 L36 50 Z" fill="#5533aa" opacity="0.6"/>
+  <path d="M36 52 C38 52, 40 51, 40 54 C40 57, 38 57, 36 56" stroke="#5533aa" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <!-- Steam from cup -->
+  <path d="M26 49 C26 47, 27 46, 26 44" stroke="#8866cc" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M30 49 C30 46, 31 45, 30 43" stroke="#8866cc" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.4"/>
+</svg>

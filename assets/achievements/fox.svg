@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2a0f00"/>
+      <stop offset="100%" stop-color="#120600"/>
+    </radialGradient>
+    <linearGradient id="furOrange" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff7f24"/>
+      <stop offset="100%" stop-color="#cc4e00"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#bg)" stroke="#b34900" stroke-width="1.5"/>
+  <!-- Left Ear -->
+  <polygon points="22,25 10,8 24,16" fill="#cc4e00" stroke="#7f3000" stroke-width="1"/>
+  <polygon points="20,23 13,12 21,17" fill="#ffe0cc" opacity="0.8"/>
+  <!-- Right Ear -->
+  <polygon points="42,25 54,8 40,16" fill="#cc4e00" stroke="#7f3000" stroke-width="1"/>
+  <polygon points="44,23 51,12 43,17" fill="#ffe0cc" opacity="0.8"/>
+  <!-- Fox Face (Main Orange Polygon) -->
+  <polygon points="32,48 16,22 48,22" fill="url(#furOrange)"/>
+  <!-- Face White Cheeks -->
+  <polygon points="32,48 16,22 25,32" fill="#ffffff" opacity="0.95"/>
+  <polygon points="32,48 48,22 39,32" fill="#ffffff" opacity="0.95"/>
+  <!-- Nose (Black Tip) -->
+  <polygon points="30,46 34,46 32,50" fill="#1a1a1a"/>
+  <!-- Sleek Angular Eyes -->
+  <polygon points="22,26 28,29 24,31" fill="#1a1a1a"/>
+  <polygon points="42,26 36,29 40,31" fill="#1a1a1a"/>
+  <!-- Eye Highlights (Amber Glow) -->
+  <polygon points="24,28 27,29 25,30" fill="#ffa500"/>
+  <polygon points="40,28 37,29 39,30" fill="#ffa500"/>
+</svg>

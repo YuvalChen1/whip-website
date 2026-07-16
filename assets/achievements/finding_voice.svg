@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#080014"/>
+      <stop offset="100%" stop-color="#03000a"/>
+    </radialGradient>
+    <linearGradient id="mic" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ddddff"/>
+      <stop offset="50%" stop-color="#8888cc"/>
+      <stop offset="100%" stop-color="#4444aa"/>
+    </linearGradient>
+    <radialGradient id="micGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#aa88ff" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#aa88ff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#bg)" stroke="#220033" stroke-width="1.5"/>
+  <!-- Sound waves left -->
+  <path d="M14 24 C10 27, 10 37, 14 40" stroke="#8866ff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M10 20 C4 25, 4 39, 10 44" stroke="#8866ff" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.3"/>
+  <!-- Sound waves right -->
+  <path d="M50 24 C54 27, 54 37, 50 40" stroke="#8866ff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M54 20 C60 25, 60 39, 54 44" stroke="#8866ff" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.3"/>
+  <!-- Glow -->
+  <circle cx="32" cy="28" r="14" fill="url(#micGlow)"/>
+  <!-- Microphone body -->
+  <rect x="25" y="14" width="14" height="24" rx="7" fill="url(#mic)" filter="url(#glow)"/>
+  <!-- Mic grille lines -->
+  <line x1="25" y1="22" x2="39" y2="22" stroke="#ffffff" stroke-width="0.7" opacity="0.3"/>
+  <line x1="25" y1="26" x2="39" y2="26" stroke="#ffffff" stroke-width="0.7" opacity="0.3"/>
+  <line x1="25" y1="30" x2="39" y2="30" stroke="#ffffff" stroke-width="0.7" opacity="0.3"/>
+  <!-- Mic highlight -->
+  <rect x="27" y="16" width="5" height="12" rx="2.5" fill="white" opacity="0.2"/>
+  <!-- Stand -->
+  <path d="M22 38 C22 44, 26 46, 32 46 C38 46, 42 44, 42 38" stroke="#6655bb" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <line x1="32" y1="46" x2="32" y2="52" stroke="#6655bb" stroke-width="2" stroke-linecap="round"/>
+  <line x1="24" y1="52" x2="40" y2="52" stroke="#6655bb" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

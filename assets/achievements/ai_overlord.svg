@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0a0010"/>
+      <stop offset="100%" stop-color="#030006"/>
+    </radialGradient>
+    <radialGradient id="eyeGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff2200"/>
+      <stop offset="50%" stop-color="#cc0000"/>
+      <stop offset="100%" stop-color="#660000"/>
+    </radialGradient>
+    <radialGradient id="pupil" cx="40%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#ff5544"/>
+      <stop offset="100%" stop-color="#110000"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#bg)" stroke="#330022" stroke-width="1.5"/>
+  <!-- Circuit lines -->
+  <line x1="8" y1="20" x2="18" y2="20" stroke="#440033" stroke-width="1" opacity="0.7"/>
+  <line x1="18" y1="20" x2="18" y2="14" stroke="#440033" stroke-width="1" opacity="0.7"/>
+  <line x1="56" y1="20" x2="46" y2="20" stroke="#440033" stroke-width="1" opacity="0.7"/>
+  <line x1="46" y1="20" x2="46" y2="14" stroke="#440033" stroke-width="1" opacity="0.7"/>
+  <line x1="8" y1="44" x2="18" y2="44" stroke="#440033" stroke-width="1" opacity="0.7"/>
+  <line x1="18" y1="44" x2="18" y2="50" stroke="#440033" stroke-width="1" opacity="0.7"/>
+  <line x1="56" y1="44" x2="46" y2="44" stroke="#440033" stroke-width="1" opacity="0.7"/>
+  <line x1="46" y1="44" x2="46" y2="50" stroke="#440033" stroke-width="1" opacity="0.7"/>
+  <!-- Circuit dots -->
+  <circle cx="18" cy="14" r="1.5" fill="#660044" opacity="0.8"/>
+  <circle cx="46" cy="14" r="1.5" fill="#660044" opacity="0.8"/>
+  <circle cx="18" cy="50" r="1.5" fill="#660044" opacity="0.8"/>
+  <circle cx="46" cy="50" r="1.5" fill="#660044" opacity="0.8"/>
+  <!-- HAL eye outer ring -->
+  <circle cx="32" cy="32" r="22" fill="none" stroke="#330011" stroke-width="2"/>
+  <circle cx="32" cy="32" r="20" fill="#0d0005"/>
+  <!-- Eye lens -->
+  <circle cx="32" cy="32" r="16" fill="url(#eyeGlow)" filter="url(#glow)"/>
+  <!-- Inner pupil -->
+  <circle cx="32" cy="32" r="9" fill="url(#pupil)"/>
+  <!-- Dark center -->
+  <circle cx="32" cy="32" r="4" fill="#050000"/>
+  <!-- Red reflection point -->
+  <circle cx="28" cy="28" r="2.5" fill="#ff7766" opacity="0.5"/>
+  <!-- Scan line effect -->
+  <rect x="12" y="31" width="40" height="1" fill="#ff0000" opacity="0.12"/>
+  <!-- Rim glow -->
+  <circle cx="32" cy="32" r="16" fill="none" stroke="#ff4422" stroke-width="1" opacity="0.5"/>
+</svg>

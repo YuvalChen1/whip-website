@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0d0a00"/>
+      <stop offset="100%" stop-color="#060400"/>
+    </radialGradient>
+    <linearGradient id="scroll" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5e6c8"/>
+      <stop offset="100%" stop-color="#c8a96e"/>
+    </linearGradient>
+    <linearGradient id="quill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#dddddd"/>
+      <stop offset="100%" stop-color="#aaaaaa"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#bg)" stroke="#332200" stroke-width="1.5"/>
+  <!-- Scroll body -->
+  <rect x="14" y="18" width="36" height="28" rx="3" fill="url(#scroll)" stroke="#8a6930" stroke-width="1.5"/>
+  <!-- Scroll top curl -->
+  <ellipse cx="32" cy="18" rx="18" ry="4" fill="#e8d4a8" stroke="#8a6930" stroke-width="1.5"/>
+  <ellipse cx="32" cy="18" rx="14" ry="2.5" fill="#c8a96e"/>
+  <!-- Scroll bottom curl -->
+  <ellipse cx="32" cy="46" rx="18" ry="4" fill="#e8d4a8" stroke="#8a6930" stroke-width="1.5"/>
+  <ellipse cx="32" cy="46" rx="14" ry="2.5" fill="#c8a96e"/>
+  <!-- Text lines on scroll -->
+  <line x1="20" y1="26" x2="44" y2="26" stroke="#8a6930" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+  <line x1="20" y1="30" x2="40" y2="30" stroke="#8a6930" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+  <line x1="20" y1="34" x2="42" y2="34" stroke="#8a6930" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+  <line x1="20" y1="38" x2="37" y2="38" stroke="#8a6930" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+  <!-- Quill feather -->
+  <path d="M44 12 C50 8, 58 10, 54 20 C52 26, 46 28, 42 36 L40 38 C42 30, 44 26, 44 20 C44 16, 42 14, 44 12Z" fill="url(#quill)" stroke="#aaa" stroke-width="0.5"/>
+  <!-- Quill tip -->
+  <path d="M40 38 L38 44 L41 40 Z" fill="#222"/>
+  <!-- Quill spine -->
+  <line x1="44" y1="12" x2="40" y2="38" stroke="#ccc" stroke-width="0.7" stroke-linecap="round"/>
+  <!-- Gold accent dot on scroll -->
+  <circle cx="32" cy="32" r="2" fill="#c8a000" opacity="0.4"/>
+</svg>

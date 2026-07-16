@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <g transform="rotate(45 50 50)">
+    <!-- Handle -->
+    <rect x="46" y="40" width="8" height="60" fill="#a0a0a0" rx="3" />
+    <!-- Swatter Head -->
+    <rect x="25" y="0" width="50" height="40" fill="#ff4d4d" rx="5" />
+    <!-- Grid Lines Vertical -->
+    <line x1="30" y1="0" x2="30" y2="40" stroke="#cc0000" stroke-width="2"/>
+    <line x1="40" y1="0" x2="40" y2="40" stroke="#cc0000" stroke-width="2"/>
+    <line x1="50" y1="0" x2="50" y2="40" stroke="#cc0000" stroke-width="2"/>
+    <line x1="60" y1="0" x2="60" y2="40" stroke="#cc0000" stroke-width="2"/>
+    <line x1="70" y1="0" x2="70" y2="40" stroke="#cc0000" stroke-width="2"/>
+    <!-- Grid Lines Horizontal -->
+    <line x1="25" y1="10" x2="75" y2="10" stroke="#cc0000" stroke-width="2"/>
+    <line x1="25" y1="20" x2="75" y2="20" stroke="#cc0000" stroke-width="2"/>
+    <line x1="25" y1="30" x2="75" y2="30" stroke="#cc0000" stroke-width="2"/>
+  </g>
+</svg>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#060018"/>
+      <stop offset="100%" stop-color="#02000a"/>
+    </radialGradient>
+    <radialGradient id="body" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#9955cc"/>
+      <stop offset="60%" stop-color="#6622aa"/>
+      <stop offset="100%" stop-color="#3300660"/>
+    </radialGradient>
+    <radialGradient id="eyeL" cx="40%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#ffcc00"/>
+      <stop offset="100%" stop-color="#cc8800"/>
+    </radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#bg)" stroke="#220044" stroke-width="1.5"/>
+  <!-- Tentacles background -->
+  <path d="M14 42 C10 48, 8 54, 10 58" stroke="#5511aa" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M20 48 C18 54, 18 58, 16 62" stroke="#5511aa" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M32 50 C32 56, 30 60, 32 64" stroke="#6622bb" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.8"/>
+  <path d="M44 48 C46 54, 46 58, 48 62" stroke="#5511aa" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M50 42 C54 48, 56 54, 54 58" stroke="#5511aa" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <!-- Side tentacles -->
+  <path d="M12 32 C6 30, 4 34, 6 38" stroke="#6622aa" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <path d="M52 32 C58 30, 60 34, 58 38" stroke="#6622aa" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <!-- Main body -->
+  <ellipse cx="32" cy="28" rx="18" ry="20" fill="url(#body)"/>
+  <!-- Body sheen -->
+  <ellipse cx="26" cy="20" rx="7" ry="10" fill="white" opacity="0.12" transform="rotate(-15 26 20)"/>
+  <!-- Eyes -->
+  <circle cx="24" cy="26" r="5" fill="#110022"/>
+  <circle cx="40" cy="26" r="5" fill="#110022"/>
+  <circle cx="24" cy="26" r="3.5" fill="url(#eyeL)"/>
+  <circle cx="40" cy="26" r="3.5" fill="url(#eyeL)"/>
+  <circle cx="24" cy="26" r="1.5" fill="#111"/>
+  <circle cx="40" cy="26" r="1.5" fill="#111"/>
+  <!-- Eye shine -->
+  <circle cx="22.5" cy="24.5" r="1" fill="white" opacity="0.7"/>
+  <circle cx="38.5" cy="24.5" r="1" fill="white" opacity="0.7"/>
+  <!-- Smile -->
+  <path d="M26 34 C28 37, 36 37, 38 34" stroke="#cc88ff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Suckers on tentacles -->
+  <circle cx="32" cy="54" r="1.5" fill="#8833cc" opacity="0.6"/>
+  <circle cx="14" cy="50" r="1.2" fill="#8833cc" opacity="0.5"/>
+  <circle cx="50" cy="50" r="1.2" fill="#8833cc" opacity="0.5"/>
+</svg>

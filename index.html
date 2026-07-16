@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
+  <title>WHIP Cursor - Crack the Whip on Your AI Tools</title>
+  <meta name="description" content="Tired of boring cursors? Control ChatGPT, Claude, and Gemini with the physical WHIP cursor, fly swatter, or premium custom cursors. Save time with prompt templates.">
+  <meta name="keywords" content="chrome extension, cursor, custom cursor, AI, chatgpt, claude, gemini, productivity, physics cursor">
+  <meta name="author" content="Yuval Chen">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="WHIP Cursor - Control Your AI with Physics Cursors">
+  <meta property="og:description" content="Add physical whips, fly swatters, water guns, and prompt templates to ChatGPT, Claude, Gemini, and Perplexity.">
+  <meta property="og:image" content="assets/whip_classic.svg">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:title" content="WHIP Cursor - Control Your AI">
+  <meta property="twitter:description" content="Add physical whips, fly swatters, water guns, and prompt templates to ChatGPT, Claude, Gemini, and Perplexity.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Styling -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Scripts -->
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+  <!-- Background Gradients -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <!-- Header / Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <svg class="logo-icon" viewBox="0 0 64 64" width="32" height="32">
+          <line x1="16" y1="48" x2="28" y2="36" stroke="#c8943a" stroke-width="8" stroke-linecap="round" />
+          <line x1="16" y1="48" x2="28" y2="36" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+          <path d="M 28 36 Q 15 15, 36 24 T 56 20" fill="none" stroke="#c8943a" stroke-width="4" stroke-linecap="round" />
+          <path d="M 28 36 Q 15 15, 36 24 T 56 20" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" />
+          <circle cx="56" cy="20" r="3.5" fill="#ff3333" />
+        </svg>
+        <span>WHIP <span class="gold-text">Cursor</span></span>
+      </a>
+      
+      <nav class="nav-links" id="navLinks">
+        <a href="#features" class="nav-item">Features</a>
+        <a href="#playground" class="nav-item">Playground</a>
+        <a href="#premium" class="nav-item">Premium</a>
+        <a href="#achievements" class="nav-item">Achievements</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="https://chromewebstore.google.com/detail/whip-cursor-control-your/gnoimbmeinfcfhabjecankoiccnpjaak" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+          <span>Add to Chrome</span>
+          <svg class="btn-arrow" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-container">
+      <div class="hero-content">
+        <div class="badge-container">
+          <span class="badge-glow">Version 2.7 Now Live</span>
+        </div>
+        <h1 class="hero-title">Crack the Whip on <span class="gradient-text animate-pulse">Your AI Tools</span></h1>
+        <p class="hero-subtitle">
+          Tired of boring, static cursors? Turn your mouse pointer into a physical whip, fly swatter, or water gun. Interact dynamically with ChatGPT, Claude, Gemini, and Perplexity, while streamlining prompts with template injections.
+        </p>
+        <div class="hero-buttons">
+          <a href="https://chromewebstore.google.com/detail/whip-cursor-control-your/gnoimbmeinfcfhabjecankoiccnpjaak" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+            <svg class="chrome-icon" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <path d="M12 0C8.21 0 4.89 2.19 3.24 5.39L7.9 13.47C8.16 11.23 10.05 9.5 12.38 9.5H21.2C20.28 4.05 15.54 0 12 0M12 14.5C10.62 14.5 9.5 13.38 9.5 12C9.5 10.62 10.62 9.5 12 9.5C13.38 9.5 14.5 10.62 14.5 12C14.5 13.38 13.38 14.5 12 14.5M3.23 7.05C1.19 10.15 1.51 14.33 4.04 17.07L8.7 9.02C8.06 9.4 7.6 10.05 7.5 10.8L3.23 7.05M12.38 14.5C11.39 14.5 10.5 15.05 10.1 15.86L5.7 23.48C7.57 24.47 9.72 25 12 25C17.47 25 22.04 21.05 22.88 15.86H14.2C13.92 15.06 13.2 14.5 12.38 14.5Z"/>
+            </svg>
+            <span>Add to Chrome — It's Free</span>
+          </a>
+          <a href="#playground" class="btn btn-secondary btn-lg">
+            <span>Try the Live Demo</span>
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num">18+</span>
+            <span class="stat-lbl">Achievements</span>
+          </div>
+          <div class="divider"></div>
+          <div class="stat-item">
+            <span class="stat-num">8+</span>
+            <span class="stat-lbl">Unique Cursors</span>
+          </div>
+          <div class="divider"></div>
+          <div class="stat-item">
+            <span class="stat-num">60fps</span>
+            <span class="stat-lbl">Physics engine</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Interactive Hero Graphic -->
+      <div class="hero-visual">
+        <div class="glass-card mockup-card">
+          <div class="mockup-header">
+            <div class="mockup-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="mockup-tab">ChatGPT</div>
+          </div>
+          <div class="mockup-body">
+            <div class="chat-bubble ai">
+              <div class="avatar-mock">AI</div>
+              <div class="bubble-content">
+                <p>Hello! How can I assist you with your task today?</p>
+              </div>
+            </div>
+            <div class="chat-bubble user">
+              <div class="bubble-content">
+                <p>Analyze this data for me.</p>
+              </div>
+              <div class="avatar-mock user-avatar">U</div>
+            </div>
+            <div class="chat-bubble ai animate-shatter-target" id="mockupAITarget">
+              <div class="avatar-mock">AI</div>
+              <div class="bubble-content">
+                <p class="target-text">Whack this bubble to trigger a whip crack!</p>
+                <div class="splat-effect" id="mockupSplat"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Prompt Templates preview -->
+          <div class="mockup-injections">
+            <div class="injection-badge"><span class="badge-dot"></span> Practical Mode Active</div>
+            <div class="injection-pills">
+              <span>JSON Format</span>
+              <span>Refactor Code</span>
+              <span>Summarize</span>
+            </div>
+          </div>
+          
+          <!-- Classic Whip Floating Preview -->
+          <div class="floating-whip-preview">
+            <svg viewBox="0 0 64 64" width="64" height="64">
+              <line x1="16" y1="48" x2="28" y2="36" stroke="#c8943a" stroke-width="8" stroke-linecap="round" />
+              <line x1="16" y1="48" x2="28" y2="36" stroke="#fff" stroke-width="4" stroke-linecap="round" />
+              <path d="M 28 36 Q 15 15, 36 24 T 56 20" fill="none" stroke="#c8943a" stroke-width="5" stroke-linecap="round" />
+              <path d="M 28 36 Q 15 15, 36 24 T 56 20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+              <circle cx="56" cy="20" r="3" fill="#ff3333" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Playground Section -->
+  <section id="playground" class="playground-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">Experience the <span class="gold-text">Physics Sandbox</span></h2>
+        <p class="section-subtitle">
+          Test the physical cursors right here. Hover over the dark grid, select your weapon of choice, and drag your cursor around to test the physical responses and sound effects!
+        </p>
+      </div>
+
+      <div class="playground-container">
+        <!-- Sidebar Controls & Selectors -->
+        <div class="playground-sidebar glass-card">
+          <h3>Equip Cursor</h3>
+          <div class="cursor-selectors">
+            <button class="selector-btn active" data-cursor="bw">
+              <img src="assets/whip_classic.svg" alt="Classic Whip" class="selector-icon">
+              <div class="selector-info">
+                <span class="selector-name">Classic Whip</span>
+                <span class="selector-status">Free</span>
+              </div>
+            </button>
+            <button class="selector-btn" data-cursor="leather">
+              <img src="assets/whip_leather.svg" alt="Leather Whip" class="selector-icon">
+              <div class="selector-info">
+                <span class="selector-name">Leather Whip</span>
+                <span class="selector-status">Free</span>
+              </div>
+            </button>
+            <button class="selector-btn" data-cursor="swatter">
+              <img src="assets/swatter.svg" alt="Fly Swatter" class="selector-icon">
+              <div class="selector-info">
+                <span class="selector-name">Fly Swatter</span>
+                <span class="selector-status">Unlockable</span>
+              </div>
+            </button>
+            <button class="selector-btn" data-cursor="fish">
+              <img src="assets/fish.svg" alt="Fish" class="selector-icon">
+              <div class="selector-info">
+                <span class="selector-name">Wobbly Fish</span>
+                <span class="selector-status">Unlockable</span>
+              </div>
+            </button>
+            <button class="selector-btn premium-btn" data-cursor="watergun">
+              <img src="assets/watergun.svg" alt="Water Gun" class="selector-icon">
+              <div class="selector-info">
+                <span class="selector-name">Water Gun 👑</span>
+                <span class="selector-status">Premium</span>
+              </div>
+            </button>
+          </div>
+
+          <div class="controls-divider"></div>
+
+          <h3>Visual Tuning</h3>
+          <div class="tuning-sliders">
+            <!-- Length -->
+            <div class="slider-group" id="tuning-length-group">
+              <div class="slider-header">
+                <label for="ropeLength">Rope Length</label>
+                <span class="slider-value" id="ropeLengthVal">50</span>
+              </div>
+              <input type="range" id="ropeLength" min="20" max="100" value="50">
+            </div>
+
+            <!-- Thickness -->
+            <div class="slider-group" id="tuning-width-group">
+              <div class="slider-header">
+                <label for="ropeWidth">Rope Thickness</label>
+                <span class="slider-value" id="ropeWidthVal">3.0</span>
+              </div>
+              <input type="range" id="ropeWidth" min="1" max="8" step="0.5" value="3">
+            </div>
+
+            <!-- Size (Fly Swatter / Fish) -->
+            <div class="slider-group" id="tuning-size-group" style="display: none;">
+              <div class="slider-header">
+                <label for="cursorSize">Cursor Scale</label>
+                <span class="slider-value" id="cursorSizeVal">80</span>
+              </div>
+              <input type="range" id="cursorSize" min="40" max="150" value="80">
+            </div>
+
+            <!-- Sound toggle -->
+            <div class="toggle-group">
+              <label for="soundToggle" class="toggle-label">
+                <span>Sound Effects</span>
+                <span class="toggle-sub">Synthesized Web Audio</span>
+              </label>
+              <div class="checkbox-wrapper">
+                <input type="checkbox" id="soundToggle" checked>
+                <span class="checkbox-slider"></span>
+              </div>
+            </div>
+            
+            <button id="resetPlaygroundBtn" class="btn btn-outline btn-block btn-sm">Reset Settings</button>
+          </div>
+        </div>
+
+        <!-- Live Sandbox Grid Area -->
+        <div class="playground-sandbox glass-card" id="sandboxArea">
+          <div class="sandbox-instructions">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+              <path d="M9 11.24V7.5a2.5 2.5 0 0 1 5 0v3.74c1.21-.81 2-2.18 2-3.74C16 4.46 13.54 2 10.5 2S5 4.46 5 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.08-.35-.11-.54-.11H13v-6a1 1 0 0 0-2 0v10.15l-3.48-.73c-.15-.03-.3-.02-.43.03l-1.02.34l4.39 4.39c.29.29.68.43 1.06.43h5.95c.75 0 1.4-.51 1.56-1.25l1.07-5.35c.11-.53-.06-1.07-.46-1.39z"/>
+            </svg>
+            <span>Hover your mouse here to test the cursor!</span>
+            <span class="sandbox-action-hint" id="sandboxActionHint">Flick fast to crack the whip!</span>
+          </div>
+
+          <!-- HTML element to act as the custom physical cursor -->
+          <div class="physics-cursor-container" id="physicsCursorContainer">
+            <!-- Simulated elements will draw inside here -->
+            <svg id="whipRopeCanvas" class="whip-canvas"></svg>
+            <div id="cursorGraphic" class="cursor-graphic"></div>
+          </div>
+          
+          <!-- Watergun splash container -->
+          <div class="water-droplets" id="waterDroplets"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Features Section -->
+  <section id="features" class="features-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">Unleash Ultimate <span class="gold-text">Cursor Control</span></h2>
+        <p class="section-subtitle">
+          More than just a visual gimmick. WHIP Cursor balances physics-based entertainment with high-efficiency productivity tools.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c8943a" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h3>Realistic Physics Engine</h3>
+          <p>
+            Experience realistic rope physics. The whip string moves dynamically following your cursor's acceleration, weight, and friction, creating satisfying flicks at 60 FPS.
+          </p>
+        </div>
+
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c8943a" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+          </div>
+          <h3>Practical Prompt Injection</h3>
+          <p>
+            Switch to Practical Mode to toggle off visual physics and turn your cursor into a prompt power tool. Instantly insert reusable prompt templates into any text inputs.
+          </p>
+        </div>
+
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c8943a" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            </svg>
+          </div>
+          <h3>Dynamic Audio Triggers</h3>
+          <p>
+            Get instant acoustic satisfaction. Whip cracks are triggered by velocity thresholds. Each weapon has unique audio profiles, including flies buzzing and water splashing.
+          </p>
+        </div>
+
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c8943a" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+          </div>
+          <h3>Interactive Customization</h3>
+          <p>
+            Fine-tune variables directly within the extension popup. Edit length, slot scale, grip size, and trace color to build a whip style that fits your display layout.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Premium Section -->
+  <section id="premium" class="premium-section">
+    <div class="container">
+      <div class="premium-badge text-center">
+        <span class="badge-premium">👑 WHIP Premium</span>
+      </div>
+      <div class="section-header text-center">
+        <h2 class="section-title">Unlock the Full Power of <span class="cyan-text">WHIP Premium</span></h2>
+        <p class="section-subtitle">
+          Supercharge your browsing experience and custom inventory. Enable features built for power-users.
+        </p>
+      </div>
+
+      <div class="premium-grid">
+        <div class="premium-card">
+          <div class="premium-card-border"></div>
+          <div class="premium-card-content">
+            <div class="card-icon cyan-text">🌐</div>
+            <h3>Whip on All Websites</h3>
+            <p>
+              By default, WHIP Cursor is locked to ChatGPT, Claude, Gemini, and Perplexity. With Premium, crack the whip on YouTube, GitHub, Wikipedia, or any site across the web!
+            </p>
+          </div>
+        </div>
+
+        <div class="premium-card">
+          <div class="premium-card-border"></div>
+          <div class="premium-card-content">
+            <div class="card-icon cyan-text">🔫</div>
+            <h3>Exclusive Premium Cursors</h3>
+            <p>
+              Unlock access to elite premium cursors: the Water Gun 🔫, Diamond Whip 💎, Fire Whip 🔥, and Electric Whip ⚡. Each features custom particle effects and graphics.
+            </p>
+          </div>
+        </div>
+
+        <div class="premium-card">
+          <div class="premium-card-border"></div>
+          <div class="premium-card-content">
+            <div class="card-icon cyan-text">🛡️</div>
+            <h3>Advanced Domain Filter</h3>
+            <p>
+              Keep control of your workflows. Toggle Whitelists or Blacklists in Settings to selectively enable or disable physical cursor physics on specific websites with a single click.
+            </p>
+          </div>
+        </div>
+
+        <div class="premium-card">
+          <div class="premium-card-border"></div>
+          <div class="premium-card-content">
+            <div class="card-icon cyan-text">☁️</div>
+            <h3>Cloud Sync & Profile Backup</h3>
+            <p>
+              Sign in with Google to synchronize unlocked items, prompt templates, statistics (cracks, active time), and achievements across all your chrome browser profiles.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Achievements Section -->
+  <section id="achievements" class="achievements-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">Unlockable <span class="gold-text">Achievements</span></h2>
+        <p class="section-subtitle">
+          Gamify your AI interactions. Track stats, earn progress points, and collect medals for showing your AI who is in control.
+        </p>
+      </div>
+
+      <!-- Scrollable achievements grid hydrated dynamically from app.js -->
+      <div class="achievements-grid" id="achievementsGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-card glass-card text-center">
+        <div class="cta-bg-glow"></div>
+        <h2>Ready to Master your Browser?</h2>
+        <p>Get the WHIP Cursor extension today, fully customize your cursor physics, and level up your AI workflows.</p>
+        <div class="cta-actions">
+          <a href="https://chromewebstore.google.com/detail/whip-cursor-control-your/gnoimbmeinfcfhabjecankoiccnpjaak" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+            <span>Install from Chrome Web Store</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-info">
+        <div class="logo">
+          <span>WHIP <span class="gold-text">Cursor</span></span>
+        </div>
+        <p class="footer-desc">Physical cursor integration and gamified prompt injections for modern AI web tools.</p>
+      </div>
+      
+      <div class="footer-links">
+        <div class="link-group">
+          <h4>Navigate</h4>
+          <a href="#features">Features</a>
+          <a href="#playground">Playground</a>
+          <a href="#premium">Premium</a>
+          <a href="#achievements">Achievements</a>
+        </div>
+        <div class="link-group">
+          <h4>Download</h4>
+          <a href="https://chromewebstore.google.com/detail/whip-cursor-control-your/gnoimbmeinfcfhabjecankoiccnpjaak" target="_blank" rel="noopener noreferrer">Chrome Extension</a>
+          <a href="https://github.com/YuvalChen1/whip-website" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom text-center">
+      <div class="container">
+        <p>&copy; 2026 WHIP Cursor. All rights reserved.</p>
+        <p class="disclaimer">Disclaimer: WHIP Cursor is an independent extension project and is not officially associated with, endorsed by, or affiliated with Google (Gemini), OpenAI (ChatGPT), Anthropic (Claude), or Perplexity.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

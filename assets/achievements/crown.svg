@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#240030"/>
+      <stop offset="100%" stop-color="#0e0014"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff6b0"/>
+      <stop offset="45%" stop-color="#ffcc00"/>
+      <stop offset="100%" stop-color="#b8860b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="55%" r="45%">
+      <stop offset="0%" stop-color="#ffd700" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#bg)" stroke="#8e2de2" stroke-width="1.5"/>
+  <!-- Velvet Cushion behind Crown -->
+  <path d="M14 42 Q32 46, 50 42 Q52 48, 32 50 Q12 48, 14 42 Z" fill="#9b0050" opacity="0.6"/>
+  <!-- Ambient Crown Glow -->
+  <circle cx="32" cy="34" r="18" fill="url(#glow)"/>
+  <!-- The Crown Shape -->
+  <path d="M16 42 L18 26 L27 34 L32 20 L37 34 L46 26 L48 42 Z" fill="url(#gold)" stroke="#8a6d00" stroke-width="1"/>
+  <!-- Crown Base Band -->
+  <path d="M16 42 Q32 45, 48 42 L48 44 Q32 47, 16 44 Z" fill="url(#gold)" stroke="#8a6d00" stroke-width="1"/>
+  <!-- Base Band Jewels -->
+  <rect x="22" y="43" width="3" height="1.5" rx="0.5" fill="#ff0055"/>
+  <circle cx="32" cy="44.2" r="1.2" fill="#00e5ff"/>
+  <rect x="39" y="43" width="3" height="1.5" rx="0.5" fill="#ff0055"/>
+  <!-- Peak Gems (Spheres at the tip of the peaks) -->
+  <circle cx="18" cy="25" r="2" fill="#ffd700" stroke="#b8860b" stroke-width="0.5"/>
+  <circle cx="18" cy="25" r="1" fill="#fff"/>
+  <circle cx="32" cy="19" r="2.5" fill="#ffd700" stroke="#b8860b" stroke-width="0.5"/>
+  <circle cx="32" cy="19" r="1.2" fill="#fff"/>
+  <circle cx="46" cy="25" r="2" fill="#ffd700" stroke="#b8860b" stroke-width="0.5"/>
+  <circle cx="46" cy="25" r="1" fill="#fff"/>
+  <!-- Center Large Emerald Jewel -->
+  <polygon points="32,29 35,32 32,35 29,32" fill="#00ff66" stroke="#00aa44" stroke-width="0.7"/>
+  <circle cx="32" cy="32" r="1" fill="#fff" opacity="0.8"/>
+</svg>
