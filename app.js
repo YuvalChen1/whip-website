@@ -987,6 +987,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 800);
   }
 
+  function spawnSplatOverlay(x, y) {
+    const splat = document.createElement('div');
+    splat.className = 'splat-effect active';
+    splat.style.left = `${x}px`;
+    splat.style.top = `${y}px`;
+    splat.style.position = 'fixed';
+    splat.style.pointerEvents = 'none';
+    splat.style.zIndex = '10000';
+    document.body.appendChild(splat);
+    setTimeout(() => splat.remove(), 400);
+  }
+
+  function animateWaterDrop(drop) {
+    let x = parseFloat(drop.dataset.x);
+    let y = parseFloat(drop.dataset.y);
+    let vx = parseFloat(drop.dataset.vx);
+    let vy = parseFloat(drop.dataset.vy);
+
+    function step() {
+      x += vx;
+      y += vy;
+      vy += 0.4;
+      drop.style.left = `${x}px`;
+      drop.style.top = `${y}px`;
+      if (y > window.innerHeight + 50) {
+        drop.remove();
+      } else {
+        requestAnimationFrame(step);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
   function checkMockupBubbleCollision(tipX, tipY) {
     if (!chatBody) return;
     const targets = chatBody.querySelectorAll('.ai-bubble-target');
