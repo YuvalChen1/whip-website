@@ -18,6 +18,66 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --- Achievements Data Render ---
+  const achievements = [
+    { id: 'warm_up', name: 'Warm Up', desc: 'Hit the AI 5 times' },
+    { id: 'first_blood', name: 'First Blood', desc: 'Hit the AI 10 times' },
+    { id: 'getting_hang', name: 'Getting the Hang', desc: 'Hit the AI 50 times' },
+    { id: 'relentless', name: 'Relentless', desc: 'Hit the AI 200 times' },
+    { id: 'ai_overlord', name: 'AI Overlord', desc: 'Hit the AI 1000 times' },
+    { id: 'apprentice', name: 'The Apprentice', desc: 'Save your first prompt template' },
+    { id: 'taskmaster', name: 'The Taskmaster', desc: 'Insert 5 practical prompts' },
+    { id: 'finding_voice', name: 'Finding Your Voice', desc: 'Add your first custom shout' },
+    { id: 'kraken', name: 'The Kraken', desc: 'Max out all whip visual dimensions' },
+    { id: 'fly_swatter', name: 'The Fly Swatter', desc: 'Minimize all whip visual dimensions' },
+    { id: 'quick_break', name: 'Quick Session', desc: 'Spend 30 minutes actively using AI' },
+    { id: 'long_shift', name: 'The Long Shift', desc: 'Spend 5 hours using any AI site' },
+    { id: 'night_shift', name: 'Night Shift', desc: 'Crack the whip between Midnight and 4:00 AM' },
+    { id: 'leather_enthusiast', name: 'Leather Enthusiast', desc: 'Switch the whip style to Leather' },
+    { id: 'zen_master', name: 'Zen Master', desc: 'Equip the whip without cracking for 60s' },
+    { id: 'first_fly', name: 'Pest Control', desc: 'Smash your first fly' },
+    { id: 'exterminator', name: 'Exterminator', desc: 'Smash 100 flies total' },
+    { id: 'premium_club', name: 'Premium Club', desc: 'Unlock WHIP Premium' }
+  ];
+
+  const grid = document.getElementById('achievementsGrid');
+  if (grid) {
+    achievements.forEach(ach => {
+      const card = document.createElement('div');
+      card.className = 'achievement-card';
+      
+      const iconWrapper = document.createElement('div');
+      iconWrapper.className = 'achievement-icon-wrapper';
+      
+      const img = document.createElement('img');
+      img.src = `assets/achievements/${ach.id}.svg`;
+      img.alt = ach.name;
+      img.className = 'achievement-icon';
+      img.onerror = () => {
+        img.src = 'assets/whip_classic.svg'; // Fallback
+      };
+      
+      iconWrapper.appendChild(img);
+      
+      const info = document.createElement('div');
+      info.className = 'achievement-info';
+      
+      const name = document.createElement('span');
+      name.className = 'achievement-name';
+      name.textContent = ach.name;
+      
+      const desc = document.createElement('span');
+      desc.className = 'achievement-desc';
+      desc.textContent = ach.desc;
+      
+      info.appendChild(name);
+      info.appendChild(desc);
+      card.appendChild(iconWrapper);
+      card.appendChild(info);
+      grid.appendChild(card);
+    });
+  }
+
   // --- Preloaded Whip Sound Pool ---
   const audioPool = [];
   const poolSize = 6;
@@ -30,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
       for (let i = 0; i < poolSize; i++) {
         const audio = new Audio('assets/sounds/whip.mp3');
         audio.preload = 'auto';
-        audio.volume = 0.6;
+        audio.volume = 0.7;
         audioPool.push(audio);
       }
     } catch (e) {
@@ -38,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Preload immediately
   preloadWhipSound();
 
   // Fallback synthesizer in case Audio element fails
@@ -84,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Synthesized sounds for other cursors
+  // Synthesized action sounds
   let actionAudioCtx = null;
   function initActionAudio() {
     if (!actionAudioCtx) {
@@ -152,147 +211,67 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
   }
 
-  // --- Achievements Data Render ---
-  const achievements = [
-    { id: 'warm_up', name: 'Warm Up', desc: 'Hit the AI 5 times' },
-    { id: 'first_blood', name: 'First Blood', desc: 'Hit the AI 10 times' },
-    { id: 'getting_hang', name: 'Getting the Hang', desc: 'Hit the AI 50 times' },
-    { id: 'relentless', name: 'Relentless', desc: 'Hit the AI 200 times' },
-    { id: 'ai_overlord', name: 'AI Overlord', desc: 'Hit the AI 1000 times' },
-    { id: 'apprentice', name: 'The Apprentice', desc: 'Save your first prompt template' },
-    { id: 'taskmaster', name: 'The Taskmaster', desc: 'Insert 5 practical prompts' },
-    { id: 'finding_voice', name: 'Finding Your Voice', desc: 'Add your first custom shout' },
-    { id: 'kraken', name: 'The Kraken', desc: 'Max out all whip visual dimensions' },
-    { id: 'fly_swatter', name: 'The Fly Swatter', desc: 'Minimize all whip visual dimensions' },
-    { id: 'quick_break', name: 'Quick Session', desc: 'Spend 30 minutes actively using AI' },
-    { id: 'long_shift', name: 'The Long Shift', desc: 'Spend 5 hours using any AI site' },
-    { id: 'night_shift', name: 'Night Shift', desc: 'Crack the whip between Midnight and 4:00 AM' },
-    { id: 'leather_enthusiast', name: 'Leather Enthusiast', desc: 'Switch the whip style to Leather' },
-    { id: 'zen_master', name: 'Zen Master', desc: 'Equip the whip without cracking for 60s' },
-    { id: 'first_fly', name: 'Pest Control', desc: 'Smash your first fly' },
-    { id: 'exterminator', name: 'Exterminator', desc: 'Smash 100 flies total' },
-    { id: 'premium_club', name: 'Premium Club', desc: 'Unlock WHIP Premium' }
-  ];
-
-  const grid = document.getElementById('achievementsGrid');
-  if (grid) {
-    achievements.forEach(ach => {
-      const card = document.createElement('div');
-      card.className = 'achievement-card';
-      
-      const iconWrapper = document.createElement('div');
-      iconWrapper.className = 'achievement-icon-wrapper';
-      
-      const img = document.createElement('img');
-      img.src = `assets/achievements/${ach.id}.svg`;
-      img.alt = ach.name;
-      img.className = 'achievement-icon';
-      img.onerror = () => {
-        img.src = 'assets/whip_classic.svg'; // Fallback
-      };
-      
-      iconWrapper.appendChild(img);
-      
-      const info = document.createElement('div');
-      info.className = 'achievement-info';
-      
-      const name = document.createElement('span');
-      name.className = 'achievement-name';
-      name.textContent = ach.name;
-      
-      const desc = document.createElement('span');
-      desc.className = 'achievement-desc';
-      desc.textContent = ach.desc;
-      
-      info.appendChild(name);
-      info.appendChild(desc);
-      card.appendChild(iconWrapper);
-      card.appendChild(info);
-      grid.appendChild(card);
-    });
-  }
-
-  // --- Particle Spawning System ---
-  function spawnParticle(x, y, type) {
-    const p = document.createElement('div');
-    p.className = `cursor-particle particle-${type}`;
-    p.style.left = `${x}px`;
-    p.style.top = `${y}px`;
-    
-    // Custom random size
-    const size = Math.random() * 8 + 4;
-    p.style.width = `${size}px`;
-    p.style.height = (type === 'electric') ? `${size * 2}px` : `${size}px`;
-    
-    // Append to body (fixed viewport position)
-    document.body.appendChild(p);
-    
-    // Physics float
-    const angle = Math.random() * Math.PI * 2;
-    const speed = Math.random() * 3 + 1;
-    let px = x;
-    let py = y;
-    const vx = Math.cos(angle) * speed;
-    const vy = Math.sin(angle) * speed;
-    const start = Date.now();
-    
-    function update() {
-      const elapsed = Date.now() - start;
-      if (elapsed > 500) {
-        p.remove();
-        return;
-      }
-      px += vx;
-      py += vy;
-      p.style.left = `${px}px`;
-      p.style.top = `${py}px`;
-      requestAnimationFrame(update);
-    }
-    requestAnimationFrame(update);
-  }
+  // --- Constants matching extension ---
+  const CRACK_SPD = 32;       // Tip speed threshold
+  const JERK_THRESH = 18;     // Speed threshold for direction reversal flick
+  const HANDLE_LEN = 44;      // Rigid handle length
+  const N = 12;               // Number of rope segments
+  const gravity = 0.15;
+  const friction = 0.88;
+  const crackCooldownTime = 1000; // 1-second crack cooldown (locks excessive sounds)
 
   // --- Global Custom Cursor ---
   const globalCursor = document.getElementById('global-cursor');
   const globalCanvas = document.getElementById('global-whip-canvas');
   const globalGraphic = document.getElementById('global-cursor-graphic');
-  
+  let globalCtx = null;
+
+  if (globalCanvas) {
+    globalCtx = globalCanvas.getContext('2d');
+  }
+
   let currentCursorMode = 'bw'; // bw, leather, fire, electric, diamond, swatter, fish, watergun
-  let equippedPlaygroundCursor = 'bw'; // sidebar selected cursor inside sandbox
+  let equippedPlaygroundCursor = 'bw'; // sidebar selection
   let isMouseInPlaygroundSandbox = false;
   let isMouseInHeroMockup = false;
+  
   let mouse = { x: 0, y: 0 };
   let lastMouse = { x: 0, y: 0 };
-  let mouseVelocity = 0;
+  let sVel = { x: 0, y: 0 }; // cursor velocity vector
+  let prevSVel = { x: 0, y: 0 };
   let lastCrackTime = 0;
-  
-  // Custom global rope config (length, thickness)
-  let ropeConfig = { length: 50, width: 3.0 };
+  let hTilt = 0; // handle tilt angle accumulator
 
-  // Global Verlet Rope chain
-  let points = [];
-  const numPoints = 12;
-  const gravity = 0.15;
-  const friction = 0.88;
+  // Particles arrays
+  let fireParticles = [];
+  let electricParticles = [];
+  let waterParticles = [];
+
+  // Verlet Rope nodes
+  let pts = [];
+  let prv = [];
 
   function initGlobalRope() {
-    points = [];
-    const segmentLength = ropeConfig.length / (numPoints - 1);
-    for (let i = 0; i < numPoints; i++) {
-      points.push({
-        x: mouse.x,
-        y: mouse.y,
-        oldx: mouse.x,
-        oldy: mouse.y
-      });
+    pts = [];
+    prv = [];
+    const h = getHandle(mouse.x, mouse.y);
+    for (let i = 0; i < N; i++) {
+      const p = { x: h.topX, y: h.topY + i * 5 };
+      pts.push(p);
+      prv.push({ ...p });
     }
   }
 
-  // Initial display setup
-  if (globalCursor) {
-    globalCursor.style.opacity = '1';
+  function resizeGlobalCanvas() {
+    if (globalCanvas) {
+      globalCanvas.width = window.innerWidth;
+      globalCanvas.height = window.innerHeight;
+    }
   }
+  window.addEventListener('resize', resizeGlobalCanvas);
+  resizeGlobalCanvas();
 
-  // Track mouse coordinates globally
+  // Track global mouse
   window.addEventListener('mousemove', (e) => {
     if (globalCursor.style.opacity === '0' || globalCursor.style.opacity === '') {
       globalCursor.style.opacity = '1';
@@ -301,32 +280,18 @@ document.addEventListener('DOMContentLoaded', () => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
 
-    const dx = mouse.x - lastMouse.x;
-    const dy = mouse.y - lastMouse.y;
-    mouseVelocity = Math.sqrt(dx*dx + dy*dy);
+    sVel.x = mouse.x - lastMouse.x;
+    sVel.y = mouse.y - lastMouse.y;
 
-    // Particle emission on movement
-    if (mouseVelocity > 2) {
-      if (currentCursorMode === 'fire') {
-        if (Math.random() < 0.3) spawnParticle(mouse.x, mouse.y, 'fire');
-      } else if (currentCursorMode === 'electric') {
-        if (Math.random() < 0.25) spawnParticle(mouse.x, mouse.y, 'electric');
-      } else if (currentCursorMode === 'diamond') {
-        if (Math.random() < 0.2) spawnParticle(mouse.x, mouse.y, 'diamond');
-      }
-    }
-
-    // Align non-whip graphic modes
     if (!isWhipMode(currentCursorMode)) {
       globalGraphic.style.left = `${mouse.x}px`;
       globalGraphic.style.top = `${mouse.y}px`;
-      
       if (currentCursorMode === 'fish') {
-        updateFishRotation(dx, dy);
+        updateFishRotation(sVel.x, sVel.y);
       }
     }
 
-    // Morph dot state checking
+    // Interactive morph checks
     const hoverTarget = e.target.closest('a, button, select, input, textarea, label, [role="button"], .selector-btn, .tab, .mockup-pill, .mockup-toggle-btn');
     if (hoverTarget) {
       globalCursor.classList.add('hovering-interactive');
@@ -352,7 +317,6 @@ document.addEventListener('DOMContentLoaded', () => {
     globalCursor.style.opacity = '1';
   });
 
-  // Track page section boundaries to transition active cursor themes
   const sections = [
     { selector: '.section-hero', mode: 'bw' },
     { selector: '.section-features', mode: 'fire' },
@@ -364,8 +328,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateActiveTheme() {
     let activeMode = 'bw';
-    
-    // Check which section container is currently under the mouse
     for (const sec of sections) {
       const el = document.querySelector(sec.selector);
       if (el) {
@@ -388,7 +350,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentCursorMode === mode) return;
     currentCursorMode = mode;
     
-    // Reset/update canvas layout rules
     if (isWhipMode(mode)) {
       globalCanvas.style.display = 'block';
       globalGraphic.style.display = 'none';
@@ -397,7 +358,6 @@ document.addEventListener('DOMContentLoaded', () => {
       globalCanvas.style.display = 'none';
       globalGraphic.style.display = 'block';
       
-      // Update background graphic sources
       if (mode === 'swatter') {
         globalGraphic.style.backgroundImage = "url('assets/swatter.svg')";
       } else if (mode === 'fish') {
@@ -405,9 +365,13 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (mode === 'watergun') {
         globalGraphic.style.backgroundImage = "url('assets/watergun.svg')";
       }
-      
       updateGraphicScaling();
     }
+    
+    // Clear particles when switching
+    fireParticles = [];
+    electricParticles = [];
+    waterParticles = [];
   }
 
   function isWhipMode(mode) {
@@ -417,7 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateGraphicScaling() {
     globalGraphic.style.width = '64px';
     globalGraphic.style.height = '64px';
-    
     if (currentCursorMode === 'swatter') {
       globalGraphic.style.transform = 'translate(-32px, -32px)';
     } else if (currentCursorMode === 'fish') {
@@ -427,7 +390,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Wobbling fish logic w/ angle interpolation
   let fishAngle = 0;
   let fishWobble = 0;
   function updateFishRotation(vx, vy) {
@@ -454,32 +416,374 @@ document.addEventListener('DOMContentLoaded', () => {
     globalGraphic.style.transform = `translate(-32px, -32px) rotate(${fishAngle + wiggle}deg)`;
   }
 
-  // --- Rope Physics Loop ---
-  function updateRopePhysics() {
-    if (points.length === 0) return;
+  // --- Handle Geometry Calculations ---
+  function getHandle(x, y) {
+    hTilt += (sVel.x * 0.01 - hTilt) * 0.08;
+    const clampedTilt = Math.max(-0.35, Math.min(0.35, hTilt));
+    const ang = Math.PI / 2 + clampedTilt; // leaning downwards
     
-    // First node locked to mouse
-    points[0].x = mouse.x;
-    points[0].y = mouse.y;
+    const dirX = Math.cos(ang);
+    const dirY = Math.sin(ang);
+    const perpX = -dirY;
+    const perpY = dirX;
+    
+    const topX = x;
+    const topY = y;
+    const botX = x + dirX * HANDLE_LEN;
+    const botY = y + dirY * HANDLE_LEN;
+    
+    return { topX, topY, botX, botY, ang, perpX, perpY, dirX, dirY };
+  }
 
-    // Verlet integration
-    for (let i = 1; i < numPoints; i++) {
-      const p = points[i];
-      const vx = (p.x - p.oldx) * friction;
-      const vy = (p.y - p.oldy) * friction + gravity;
+  // --- Smoothing Math Curves ---
+  function catmullPoint(arr, i) {
+    const len = arr.length;
+    if (i < 0) return len >= 2 ? { x: 2 * arr[0].x - arr[1].x, y: 2 * arr[0].y - arr[1].y } : { x: arr[0].x, y: arr[0].y };
+    if (i >= len) return len >= 2 ? { x: 2 * arr[len - 1].x - arr[len - 2].x, y: 2 * arr[len - 1].y - arr[len - 2].y } : { x: arr[len - 1].x, y: arr[len - 1].y };
+    return arr[i];
+  }
+
+  function bezier(arr, i) {
+    const p0 = catmullPoint(arr, i - 1), p1 = arr[i], p2 = arr[i + 1], p3 = catmullPoint(arr, i + 2);
+    return {
+      cp1x: p1.x + (p2.x - p0.x) / 6, cp1y: p1.y + (p2.y - p0.y) / 6,
+      cp2x: p2.x - (p3.x - p1.x) / 6, cp2y: p2.y - (p3.y - p1.y) / 6,
+      x2: p2.x, y2: p2.y,
+    };
+  }
+
+  // --- Segmented Taper Drawing ---
+  function drawSegmentedTaper(ctx, ropePts, strokeStyleBase, widthBase) {
+    const steps = 4;
+    const len = ropePts.length - 1;
+    const stepSize = Math.ceil(len / steps);
+    
+    for (let s = 0; s < steps; s++) {
+      const startIdx = s * stepSize;
+      if (startIdx >= len) break;
+      const endIdx = Math.min(len, startIdx + stepSize);
       
-      p.oldx = p.x;
-      p.oldy = p.y;
+      const t = startIdx / len;
+      const w = widthBase * (1 - t * 0.8) + 0.5;
+      
+      ctx.beginPath();
+      ctx.moveTo(ropePts[startIdx].x, ropePts[startIdx].y);
+      for (let i = startIdx; i < endIdx; i++) {
+        const { cp1x, cp1y, cp2x, cp2y, x2, y2 } = bezier(ropePts, i);
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+      }
+      ctx.strokeStyle = strokeStyleBase;
+      ctx.lineWidth = w;
+      ctx.lineCap = ctx.lineJoin = 'round';
+      ctx.stroke();
+    }
+  }
+
+  // --- Canvas-based Handle Drawing ---
+  function drawCanvasHandle(ctx, h, style) {
+    const wTop = HANDLE_LEN * 0.1375;
+    const wBot = HANDLE_LEN * 0.055;
+    const { topX, topY, botX, botY, perpX, perpY } = h;
+    const px = perpX, py = perpY;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(topX + px * wTop, topY + py * wTop);
+    ctx.lineTo(botX + px * wBot, botY + py * wBot);
+    ctx.lineTo(botX - px * wBot, botY - py * wBot);
+    ctx.lineTo(topX - px * wTop, topY - py * wTop);
+    ctx.closePath();
+
+    if (style === 'bw') {
+      ctx.fillStyle = '#000000'; ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.3; ctx.stroke();
+    } else if (style === 'diamond') {
+      const bg = ctx.createLinearGradient(topX, topY, botX, botY);
+      bg.addColorStop(0, '#00e5ff'); bg.addColorStop(0.5, '#0066ff'); bg.addColorStop(1, '#9b51e0');
+      ctx.fillStyle = bg; ctx.fill();
+      ctx.strokeStyle = '#e0f7fa'; ctx.lineWidth = 1.5; ctx.stroke();
+    } else if (style === 'fire') {
+      const bg = ctx.createLinearGradient(topX, topY, botX, botY);
+      bg.addColorStop(0, '#ff3c00'); bg.addColorStop(0.3, '#1c1c1e'); bg.addColorStop(1, '#0e0e10');
+      ctx.fillStyle = bg; ctx.fill();
+      ctx.strokeStyle = '#ff6600'; ctx.lineWidth = 1.5; ctx.stroke();
+    } else if (style === 'electric') {
+      const bg = ctx.createLinearGradient(topX, topY, botX, botY);
+      bg.addColorStop(0, '#00e5ff'); bg.addColorStop(0.2, '#2b2b2b'); bg.addColorStop(1, '#111112');
+      ctx.fillStyle = bg; ctx.fill();
+      ctx.strokeStyle = '#00e5ff'; ctx.lineWidth = 1.5; ctx.stroke();
+    } else { // leather
+      const bg = ctx.createLinearGradient(topX, topY, botX, botY);
+      bg.addColorStop(0, '#5e2510'); bg.addColorStop(1, '#2a0e04');
+      ctx.fillStyle = bg; ctx.fill();
+      ctx.strokeStyle = '#1e0a02'; ctx.lineWidth = 1.3; ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // --- Canvas-based Rope Drawing ---
+  function drawCanvasRope(ctx, ropePts, style, widthBase) {
+    const len = ropePts.length;
+
+    if (style === 'bw') {
+      ctx.beginPath(); ctx.moveTo(ropePts[0].x, ropePts[0].y);
+      for (let i = 0; i < len - 1; i++) {
+        const { cp1x, cp1y, cp2x, cp2y, x2, y2 } = bezier(ropePts, i);
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+      }
+      ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = widthBase * 2.5; ctx.lineCap = ctx.lineJoin = 'round'; ctx.stroke();
+
+      ctx.beginPath(); ctx.moveTo(ropePts[0].x, ropePts[0].y);
+      for (let i = 0; i < len - 1; i++) {
+        const { cp1x, cp1y, cp2x, cp2y, x2, y2 } = bezier(ropePts, i);
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+      }
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = widthBase; ctx.stroke();
+    } else if (style === 'diamond') {
+      ctx.save();
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#00f0ff';
+      ctx.beginPath(); ctx.moveTo(ropePts[0].x, ropePts[0].y);
+      for (let i = 0; i < len - 1; i++) {
+        const { cp1x, cp1y, cp2x, cp2y, x2, y2 } = bezier(ropePts, i);
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+      }
+      ctx.strokeStyle = '#00bfff'; ctx.lineWidth = widthBase * 2.5; ctx.lineCap = ctx.lineJoin = 'round'; ctx.stroke();
+      ctx.restore();
+
+      const grad = ctx.createLinearGradient(ropePts[0].x, ropePts[0].y, ropePts[len-1].x, ropePts[len-1].y);
+      for (let j = 0; j <= 4; j++) {
+        const tVal = j / 4;
+        const hue = Math.round((tVal * 240 + Date.now() / 20) % 360);
+        grad.addColorStop(tVal, `hsla(${hue}, 100%, 75%, 1)`);
+      }
+      drawSegmentedTaper(ctx, ropePts, grad, widthBase * 2.75);
+    } else if (style === 'fire') {
+      ctx.save();
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = '#ff4500';
+      ctx.beginPath(); ctx.moveTo(ropePts[0].x, ropePts[0].y);
+      for (let i = 0; i < len - 1; i++) {
+        const { cp1x, cp1y, cp2x, cp2y, x2, y2 } = bezier(ropePts, i);
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+      }
+      ctx.strokeStyle = '#ff3c00'; ctx.lineWidth = widthBase * 2.5; ctx.lineCap = ctx.lineJoin = 'round'; ctx.stroke();
+      ctx.restore();
+
+      const grad = ctx.createLinearGradient(ropePts[0].x, ropePts[0].y, ropePts[len-1].x, ropePts[len-1].y);
+      const flicker = Math.sin(Date.now() / 30) * 15;
+      grad.addColorStop(0, `hsla(${35 + flicker}, 100%, 65%, 1)`);
+      grad.addColorStop(1, `hsla(${55 + flicker}, 100%, 75%, 1)`);
+      drawSegmentedTaper(ctx, ropePts, grad, widthBase * 2.75);
+    } else if (style === 'electric') {
+      ctx.save();
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#00e5ff';
+      ctx.beginPath(); ctx.moveTo(ropePts[0].x, ropePts[0].y);
+      for (let i = 0; i < len - 1; i++) {
+        const { cp1x, cp1y, cp2x, cp2y, x2, y2 } = bezier(ropePts, i);
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+      }
+      ctx.strokeStyle = '#0066ff'; ctx.lineWidth = widthBase * 2.2; ctx.lineCap = ctx.lineJoin = 'round'; ctx.stroke();
+      ctx.restore();
+
+      // Jagged arcs overlay
+      ctx.beginPath();
+      ctx.moveTo(ropePts[0].x, ropePts[0].y);
+      for (let i = 0; i < len - 1; i++) {
+        const p1 = ropePts[i];
+        const p2 = ropePts[i + 1];
+        const midX = (p1.x + p2.x) / 2;
+        const midY = (p1.y + p2.y) / 2;
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        const segmentLen = Math.hypot(dx, dy);
+        const nx = -dy / (segmentLen || 1);
+        const ny = dx / (segmentLen || 1);
+        const disp = (Math.random() - 0.5) * 8;
+        ctx.lineTo(midX + nx * disp, midY + ny * disp);
+        ctx.lineTo(p2.x, p2.y);
+      }
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = widthBase * 0.9; ctx.lineCap = ctx.lineJoin = 'round'; ctx.stroke();
+
+      // Branching arcs
+      if (Math.random() < 0.4) {
+        const idx = Math.floor(Math.random() * (len - 2)) + 1;
+        const p = ropePts[idx];
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        let curX = p.x;
+        let curY = p.y;
+        for (let j = 0; j < 3; j++) {
+          const ang = Math.random() * Math.PI * 2;
+          const dist = Math.random() * 8 + 4;
+          curX += Math.cos(ang) * dist;
+          curY += Math.sin(ang) * dist;
+          ctx.lineTo(curX, curY);
+        }
+        ctx.strokeStyle = 'rgba(0, 229, 255, 0.75)'; ctx.lineWidth = widthBase * 0.5; ctx.stroke();
+      }
+    } else { // leather
+      ctx.save(); ctx.translate(2.5, 3.5); ctx.globalAlpha = 0.1;
+      ctx.beginPath(); ctx.moveTo(ropePts[0].x, ropePts[0].y);
+      for (let i = 0; i < len - 1; i++) {
+        const { cp1x, cp1y, cp2x, cp2y, x2, y2 } = bezier(ropePts, i);
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+      }
+      ctx.strokeStyle = '#000000'; ctx.lineWidth = 6.5; ctx.lineCap = ctx.lineJoin = 'round'; ctx.stroke();
+      ctx.restore();
+
+      const grad = ctx.createLinearGradient(ropePts[0].x, ropePts[0].y, ropePts[len-1].x, ropePts[len-1].y);
+      grad.addColorStop(0, 'rgb(90, 38, 8)');
+      grad.addColorStop(1, 'rgb(205, 93, 22)');
+      drawSegmentedTaper(ctx, ropePts, grad, widthBase * 2.75);
+    }
+
+    // Cracker
+    for (let i = len - 3; i < len - 1; i++) {
+      ctx.beginPath(); ctx.moveTo(ropePts[i].x, ropePts[i].y); ctx.lineTo(ropePts[i + 1].x, ropePts[i + 1].y);
+      ctx.strokeStyle = i === len - 3 ? '#ff3333' : '#ffffff';
+      ctx.lineWidth = widthBase * 0.65; ctx.lineCap = 'round'; ctx.stroke();
+    }
+  }
+
+  // --- Particles Spawning along rope length ---
+  function updateAndDrawParticles(ctx, ropePts, style) {
+    // 1. Spawning Particles
+    if (ropePts && ropePts.length >= N) {
+      if (style === 'fire') {
+        for (let s = 0; s < 2; s++) {
+          const idx = Math.floor(Math.random() * (N - 1));
+          const ratio = Math.random();
+          const px = ropePts[idx].x + (ropePts[idx+1].x - ropePts[idx].x) * ratio;
+          const py = ropePts[idx].y + (ropePts[idx+1].y - ropePts[idx].y) * ratio;
+          
+          fireParticles.push({
+            x: px + (Math.random() - 0.5) * 6,
+            y: py + (Math.random() - 0.5) * 6,
+            vx: (Math.random() - 0.5) * 1.0,
+            vy: -Math.random() * 1.5 - 0.5,
+            life: 1.0,
+            decay: Math.random() * 0.03 + 0.02,
+            size: Math.random() * 5 + 3,
+            colorHue: Math.random() * 25 + 15
+          });
+        }
+      } else if (style === 'electric' || style === 'diamond') {
+        for (let s = 0; s < 2; s++) {
+          const idx = Math.floor(Math.random() * (N - 1));
+          const ratio = Math.random();
+          const px = ropePts[idx].x + (ropePts[idx+1].x - ropePts[idx].x) * ratio;
+          const py = ropePts[idx].y + (ropePts[idx+1].y - ropePts[idx].y) * ratio;
+          
+          electricParticles.push({
+            x: px,
+            y: py,
+            dx: (Math.random() - 0.5) * 14,
+            dy: (Math.random() - 0.5) * 14,
+            life: 1.0,
+            decay: style === 'diamond' ? (Math.random() * 0.05 + 0.03) : (Math.random() * 0.12 + 0.1),
+            color: Math.random() < 0.3 ? '#ffffff' : '#00e5ff',
+            isSparkle: style === 'diamond'
+          });
+        }
+      }
+    }
+
+    // 2. Render & Update Fire particles
+    for (let i = fireParticles.length - 1; i >= 0; i--) {
+      const p = fireParticles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= p.decay;
+      if (p.life <= 0) {
+        fireParticles.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      
+      let hue = p.colorHue;
+      let sat = 100;
+      let light = 50 + (1 - p.life) * 20;
+      if (p.life < 0.3) {
+        ctx.fillStyle = `rgba(100, 100, 100, ${p.life * 1.5})`;
+      } else {
+        ctx.fillStyle = `hsla(${hue}, ${sat}%, ${light}%, ${p.life})`;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = `hsla(${hue}, 100%, 50%, 0.8)`;
+      }
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // 3. Render & Update Electric / Diamond particles
+    for (let i = electricParticles.length - 1; i >= 0; i--) {
+      const p = electricParticles[i];
+      p.life -= p.decay;
+      if (p.life <= 0) {
+        electricParticles.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.beginPath();
+      if (p.isSparkle) {
+        const size = Math.max(3, (Math.abs(p.dx) + Math.abs(p.dy)) * 0.25) * p.life;
+        ctx.moveTo(p.x - size, p.y); ctx.lineTo(p.x + size, p.y);
+        ctx.moveTo(p.x, p.y - size); ctx.lineTo(p.x, p.y + size);
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 1.0 * p.life;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#00e5ff';
+        ctx.stroke();
+      } else {
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x + p.dx, p.y + p.dy);
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 1.5 * p.life;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = '#00e5ff';
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+  }
+
+  // --- Global Verlet Solver ---
+  function updateGlobalRopePhysics() {
+    if (pts.length === 0 || !globalCtx) return;
+    
+    // Clear canvas
+    globalCtx.clearRect(0, 0, globalCanvas.width, globalCanvas.height);
+
+    // Get Handle
+    const h = getHandle(mouse.x, mouse.y);
+    pts[0].x = h.topX;
+    pts[0].y = h.topY;
+    prv[0].x = h.topX - sVel.x * 0.1;
+    prv[0].y = h.topY - sVel.y * 0.1;
+
+    // Physics Verlet Integration
+    for (let i = 1; i < N; i++) {
+      const p = pts[i];
+      const vx = (p.x - prv[i].x) * friction;
+      const vy = (p.y - prv[i].y) * friction + gravity;
+      
+      prv[i].x = p.x;
+      prv[i].y = p.y;
       p.x += vx;
       p.y += vy;
     }
 
-    // Constraints resolution
-    const segmentLength = ropeConfig.length / (numPoints - 1);
+    // Solve Constraints
+    const segmentLength = ropeConfig.length / (N - 1);
     for (let loop = 0; loop < 5; loop++) {
-      for (let i = 1; i < numPoints; i++) {
-        const p1 = points[i - 1];
-        const p2 = points[i];
+      for (let i = 1; i < N; i++) {
+        const p1 = pts[i - 1];
+        const p2 = pts[i];
         
         const dx = p2.x - p1.x;
         const dy = p2.y - p1.y;
@@ -493,7 +797,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const offsetY = dy * percent;
         
         if (i === 1) {
-          // Anchored, translate only endpoint node
           p2.x += offsetX * 2;
           p2.y += offsetY * 2;
         } else {
@@ -505,258 +808,58 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Draw the active whip
-    drawGlobalRope();
+    // Draw handle & rope
+    drawCanvasHandle(globalCtx, h, currentCursorMode);
+    drawCanvasRope(globalCtx, pts, currentCursorMode, ropeConfig.width);
 
-    // Check velocity for whip crack trigger
-    const tip = points[numPoints - 1];
-    const dx = tip.x - tip.oldx;
-    const dy = tip.y - tip.oldy;
-    const tipSpeed = Math.sqrt(dx*dx + dy*dy);
+    // Draw particles
+    updateAndDrawParticles(globalCtx, pts, currentCursorMode);
+
+    // Crack check (1-second cooldown avoids repetitive cracks on single sweep)
+    const tip = pts[N - 1];
+    const tdx = tip.x - prv[N - 1].x;
+    const tdy = tip.y - prv[N - 1].y;
+    const tipSpeed = Math.sqrt(tdx*tdx + tdy*tdy);
     const now = Date.now();
-    
-    if (tipSpeed > 30 && now - lastCrackTime > 260) {
+
+    if (tipSpeed > CRACK_SPD && now - lastCrackTime > crackCooldownTime) {
       playWhipCrack();
       lastCrackTime = now;
       
-      // Spawn small flash splat
+      // Flash splat
       spawnSplatOverlay(tip.x, tip.y);
       
-      // Perform collision checking if inside ChatGPT mockup simulator
+      // Mockup target whacking
       if (isMouseInHeroMockup && mockupMode === 'fun') {
         checkMockupBubbleCollision(tip.x, tip.y);
       }
     }
-  }
 
-  function drawGlobalRope() {
-    if (points.length === 0) return;
-    
-    while (globalCanvas.firstChild) {
-      globalCanvas.removeChild(globalCanvas.firstChild);
-    }
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    
-    // 1. Calculate Stiff Handle Coordinates (End at hx, hy)
-    const dx = points[1].x - points[0].x;
-    const dy = points[1].y - points[0].y;
-    const dist = Math.sqrt(dx*dx + dy*dy) || 1;
-    const hLength = 22; // Handle length
-    const hx = points[0].x + (dx / dist) * hLength;
-    const hy = points[0].y + (dy / dist) * hLength;
-
-    // Draw path connecting handle end node to remaining segments
-    let d = `M ${hx} ${hy}`;
-    for (let i = 1; i < numPoints - 1; i++) {
-      const xc = (points[i].x + points[i + 1].x) / 2;
-      const yc = (points[i].y + points[i + 1].y) / 2;
-      d += ` Q ${points[i].x} ${points[i].y}, ${xc} ${yc}`;
-    }
-    d += ` L ${points[numPoints - 1].x} ${points[numPoints - 1].y}`;
-    
-    path.setAttribute('d', d);
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke-linecap', 'round');
-    path.setAttribute('stroke-linejoin', 'round');
-
-    // Styled colors based on active mode
-    if (currentCursorMode === 'bw') {
-      path.setAttribute('stroke', '#c8943a');
-      path.setAttribute('stroke-width', ropeConfig.width);
-    } else if (currentCursorMode === 'leather') {
-      path.setAttribute('stroke', '#a6582a');
-      path.setAttribute('stroke-width', ropeConfig.width);
-    } else if (currentCursorMode === 'fire') {
-      path.setAttribute('stroke', 'url(#fireGradient)');
-      path.setAttribute('stroke-width', ropeConfig.width * 1.2);
-      path.style.filter = 'drop-shadow(0 0 4px #ff3300)';
-    } else if (currentCursorMode === 'electric') {
-      path.setAttribute('stroke', '#00e5ff');
-      path.setAttribute('stroke-width', ropeConfig.width);
-      path.style.filter = 'drop-shadow(0 0 6px #00e5ff)';
-    } else if (currentCursorMode === 'diamond') {
-      path.setAttribute('stroke', 'url(#diamondGradient)');
-      path.setAttribute('stroke-width', ropeConfig.width * 0.9);
-      path.style.filter = 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.6))';
-    }
-
-    // Append Gradients definitions
-    ensureGradientDefinitions();
-
-    // 2. Render Cracker red tip
-    const cracker = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    const tipNode = points[numPoints - 1];
-    cracker.setAttribute('cx', tipNode.x);
-    cracker.setAttribute('cy', tipNode.y);
-    cracker.setAttribute('r', Math.max(3, ropeConfig.width * 0.9));
-    cracker.setAttribute('fill', '#ff3333');
-    if (currentCursorMode === 'fire') cracker.setAttribute('fill', '#ffff55');
-    if (currentCursorMode === 'electric') cracker.setAttribute('fill', '#ffffff');
-
-    // 3. Render Multi-layered Stiff Handle
-    const handles = [];
-    const createLine = (color, width, dash = '') => {
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', points[0].x);
-      line.setAttribute('y1', points[0].y);
-      line.setAttribute('x2', hx);
-      line.setAttribute('y2', hy);
-      line.setAttribute('stroke', color);
-      line.setAttribute('stroke-width', width);
-      line.setAttribute('stroke-linecap', 'round');
-      if (dash) line.setAttribute('stroke-dasharray', dash);
-      return line;
-    };
-
-    if (currentCursorMode === 'bw') {
-      handles.push(createLine('#000000', ropeConfig.width * 2.5));
-      handles.push(createLine('#ffffff', ropeConfig.width * 1.3));
-    } else if (currentCursorMode === 'leather') {
-      handles.push(createLine('#3a1800', ropeConfig.width * 2.6));
-      handles.push(createLine('#8b4513', ropeConfig.width * 1.4));
-      handles.push(createLine('#5e2510', ropeConfig.width * 0.7, '2 3'));
-    } else if (currentCursorMode === 'fire') {
-      handles.push(createLine('#1a0500', ropeConfig.width * 2.8));
-      handles.push(createLine('#e63900', ropeConfig.width * 1.5));
-      handles.push(createLine('#ff8c00', ropeConfig.width * 0.8));
-    } else if (currentCursorMode === 'electric') {
-      handles.push(createLine('#03141a', ropeConfig.width * 2.8));
-      handles.push(createLine('#00a2e8', ropeConfig.width * 1.5));
-      handles.push(createLine('#00e5ff', ropeConfig.width * 0.7));
-    } else if (currentCursorMode === 'diamond') {
-      handles.push(createLine('#111111', ropeConfig.width * 2.6));
-      handles.push(createLine('#94a3b8', ropeConfig.width * 1.4));
-      handles.push(createLine('#ffffff', ropeConfig.width * 0.6));
-    }
-
-    globalCanvas.appendChild(path);
-    globalCanvas.appendChild(cracker);
-    handles.forEach(h => globalCanvas.appendChild(h));
-  }
-
-  function ensureGradientDefinitions() {
-    let defs = globalCanvas.querySelector('defs');
-    if (!defs) {
-      defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-      
-      // Fire Gradient
-      const fireGrad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-      fireGrad.setAttribute('id', 'fireGradient');
-      fireGrad.innerHTML = `<stop offset="0%" stop-color="#ff1a00"/><stop offset="50%" stop-color="#ff7700"/><stop offset="100%" stop-color="#ffff00"/>`;
-      
-      // Diamond Gradient
-      const diaGrad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-      diaGrad.setAttribute('id', 'diamondGradient');
-      diaGrad.innerHTML = `<stop offset="0%" stop-color="#80e5ff"/><stop offset="50%" stop-color="#ffffff"/><stop offset="100%" stop-color="#bcefff"/>`;
-      
-      defs.appendChild(fireGrad);
-      defs.appendChild(diaGrad);
-      globalCanvas.appendChild(defs);
-    }
-  }
-
-  function spawnSplatOverlay(x, y) {
-    const splat = document.createElement('div');
-    splat.className = 'splat-effect active';
-    splat.style.left = `${x}px`;
-    splat.style.top = `${y}px`;
-    
-    // Set custom gradient based on cursor mode
-    if (currentCursorMode === 'fire') {
-      splat.style.background = 'radial-gradient(circle, #e63900 10%, transparent 60%)';
-    } else if (currentCursorMode === 'electric') {
-      splat.style.background = 'radial-gradient(circle, #00e5ff 10%, transparent 60%)';
-    } else if (currentCursorMode === 'diamond') {
-      splat.style.background = 'radial-gradient(circle, #ffffff 10%, transparent 60%)';
-    }
-    
-    document.body.appendChild(splat);
-    setTimeout(() => {
-      splat.remove();
-    }, 450);
-  }
-
-  // --- Click shoots custom water gun droplets ---
-  window.addEventListener('mousedown', (e) => {
-    const hoverTarget = e.target.closest('a, button, select, input, textarea, label, [role="button"], .selector-btn, .tab, .mockup-pill, .mockup-toggle-btn');
-    if (hoverTarget) return; // ignore clicks on buttons/links
-    
-    if (currentCursorMode === 'watergun' && !isMouseInPlaygroundSandbox) {
-      playSynthWater();
-      
-      // Recoil
-      globalGraphic.style.transition = 'transform 0.05s ease-out';
-      globalGraphic.style.transform = 'translate(-32px, -8px) scale(0.9)';
-      
-      setTimeout(() => {
-        globalGraphic.style.transition = 'none';
-        updateGraphicScaling();
-      }, 120);
-
-      // Spray droplets
-      for (let i = 0; i < 5; i++) {
-        const drop = document.createElement('div');
-        drop.className = 'water-droplet';
-        
-        const sx = e.clientX;
-        const sy = e.clientY - 20;
-        
-        drop.style.left = `${sx}px`;
-        drop.style.top = `${sy}px`;
-        
-        const angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.45; // Shoot upwards
-        const speed = 7 + Math.random() * 7;
-        
-        drop.dataset.vx = Math.cos(angle) * speed;
-        drop.dataset.vy = Math.sin(angle) * speed;
-        drop.dataset.x = sx;
-        drop.dataset.y = sy;
-        
-        document.body.appendChild(drop);
-        animateWaterDrop(drop);
+    // Direction reversal jerk crack
+    const dot = sVel.x * prevSVel.x + sVel.y * prevSVel.y;
+    const curSpd = Math.sqrt(sVel.x ** 2 + sVel.y ** 2);
+    const prvSpd = Math.sqrt(prevSVel.x ** 2 + prevSVel.y ** 2);
+    if (dot < 0 && curSpd > JERK_THRESH && prvSpd > JERK_THRESH && now - lastCrackTime > crackCooldownTime) {
+      playWhipCrack();
+      lastCrackTime = now;
+      spawnSplatOverlay(tip.x, tip.y);
+      if (isMouseInHeroMockup && mockupMode === 'fun') {
+        checkMockupBubbleCollision(tip.x, tip.y);
       }
     }
-  });
 
-  function animateWaterDrop(drop) {
-    let dx = parseFloat(drop.dataset.x);
-    let dy = parseFloat(drop.dataset.y);
-    let dvx = parseFloat(drop.dataset.vx);
-    let dvy = parseFloat(drop.dataset.vy);
-    const start = Date.now();
-    
-    function step() {
-      const elapsed = Date.now() - start;
-      if (elapsed > 550 || !drop.parentNode) {
-        drop.remove();
-        return;
-      }
-      
-      dvy += 0.35; // gravity
-      dx += dvx;
-      dy += dvy;
-      
-      drop.style.left = `${dx}px`;
-      drop.style.top = `${dy}px`;
-      
-      const scale = 1 - (elapsed / 550);
-      drop.style.transform = `translate(-50%, -50%) scale(${scale})`;
-      
-      requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
+    prevSVel = { ...sVel };
   }
 
-  // --- Interactive ChatGPT Simulator Logic ---
+  // --- Interactive ChatGPT Simulator ---
   const heroMockup = document.getElementById('heroMockup');
   const chatBody = document.getElementById('mockupChatBody');
   const toggleFun = document.getElementById('mockupToggleFun');
   const togglePrac = document.getElementById('mockupTogglePrac');
   const injectionsPanel = document.getElementById('mockupInjectionsPanel');
   const mockupTextbox = document.getElementById('mockupTextbox');
-  const sendIcon = mockupInjectionsPanel ? mockupInjectionsPanel.querySelector('.mockup-send-icon') : null;
-  
+  const sendIcon = injectionsPanel ? injectionsPanel.querySelector('.mockup-send-icon') : null;
+
   let mockupMode = 'fun'; // fun, prac
   let typingTimer = null;
 
@@ -770,14 +873,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (toggleFun && togglePrac && injectionsPanel) {
-    // Mode toggling
     toggleFun.addEventListener('click', () => {
       toggleFun.classList.add('active');
       togglePrac.classList.remove('active');
       injectionsPanel.classList.add('disabled');
       mockupMode = 'fun';
-      
-      // Restore initial chat history
       resetMockupChatBody();
     });
 
@@ -820,13 +920,11 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  // Click on prompt template pills
   document.querySelectorAll('.mockup-pill').forEach(pill => {
     pill.addEventListener('click', () => {
       if (mockupMode !== 'prac') return;
-      
-      const promptText = pill.getAttribute('data-prompt');
-      simulateTyping(promptText);
+      const text = pill.getAttribute('data-prompt');
+      simulateTyping(text);
     });
   });
 
@@ -836,19 +934,14 @@ document.addEventListener('DOMContentLoaded', () => {
     mockupTextbox.classList.add('typing');
     sendIcon.classList.remove('active');
     
-    let index = 0;
+    let idx = 0;
     typingTimer = setInterval(() => {
-      mockupTextbox.textContent += text[index];
-      index++;
-      
-      if (index >= text.length) {
+      mockupTextbox.textContent += text[idx];
+      idx++;
+      if (idx >= text.length) {
         clearInterval(typingTimer);
         sendIcon.classList.add('active');
-        
-        // Auto submit after short delay
-        setTimeout(() => {
-          submitMockupPrompt(text);
-        }, 500);
+        setTimeout(() => submitMockupPrompt(text), 500);
       }
     }, 20);
   }
@@ -856,7 +949,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function submitMockupPrompt(text) {
     if (!chatBody) return;
     
-    // Add user bubble
     const userBubble = document.createElement('div');
     userBubble.className = 'chat-bubble user';
     userBubble.innerHTML = `
@@ -865,14 +957,11 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     chatBody.appendChild(userBubble);
     
-    // Reset textbox
     mockupTextbox.textContent = 'Type a prompt...';
     mockupTextbox.classList.remove('typing');
     sendIcon.classList.remove('active');
-    
     chatBody.scrollTop = chatBody.scrollHeight;
 
-    // AI typing indicator delay
     setTimeout(() => {
       const aiResponse = document.createElement('div');
       aiResponse.className = 'chat-bubble ai';
@@ -884,7 +973,6 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       chatBody.appendChild(aiResponse);
       
-      // Select response texts
       const label = text.substring(0, 8).toLowerCase();
       const txtNode = aiResponse.querySelector('.ai-sim-response');
       if (label.includes('inject')) {
@@ -894,26 +982,18 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         txtNode.textContent = "Core takeaway: Templates automate repetitive prompt configurations, enhancing overall developer efficiency.";
       }
-      
       chatBody.scrollTop = chatBody.scrollHeight;
     }, 800);
   }
 
-  // Bounding box intersection check for whipping the chat bubbles
   function checkMockupBubbleCollision(tipX, tipY) {
     const targets = chatBody.querySelectorAll('.ai-bubble-target');
     targets.forEach(target => {
       const rect = target.getBoundingClientRect();
-      
-      // Check if coordinates overlap
       if (tipX >= rect.left && tipX <= rect.right && tipY >= rect.top && tipY <= rect.bottom) {
         if (!target.classList.contains('wobbling')) {
-          // Play sound
           playWhipCrack();
-          
           target.classList.add('wobbling');
-          
-          // Place splat particle inside bubble relative coordinates
           const splat = target.querySelector('.splat-effect');
           if (splat) {
             const rx = tipX - rect.left;
@@ -921,36 +1001,51 @@ document.addEventListener('DOMContentLoaded', () => {
             splat.style.left = `${rx}px`;
             splat.style.top = `${ry}px`;
             splat.classList.add('active');
-            
-            setTimeout(() => {
-              splat.classList.remove('active');
-            }, 400);
+            setTimeout(() => splat.classList.remove('active'), 400);
           }
-          
-          setTimeout(() => {
-            target.classList.remove('wobbling');
-          }, 500);
+          setTimeout(() => target.classList.remove('wobbling'), 500);
         }
       }
     });
   }
 
-  // --- Sandbox Section specific overrides ---
+  // --- Local Sandbox specific handlers ---
   const sandbox = document.getElementById('sandboxArea');
   const sandboxSidebar = document.querySelector('.playground-sidebar');
   const sandboxCanvas = document.getElementById('whipRopeCanvas');
   const sandboxCursorGraphic = document.getElementById('cursorGraphic');
+  let sandboxCtx = null;
+
+  if (sandboxCanvas) {
+    sandboxCtx = sandboxCanvas.getContext('2d');
+  }
+
+  // Local sandbox sizing state variables
+  let localPts = [];
+  let localPrv = [];
+  let localConfig = { length: 50, width: 3.0, size: 80 };
+  let localTilt = 0;
+  let localLastCrackTime = 0;
+
+  function resizeSandboxCanvas() {
+    if (sandboxCanvas && sandbox) {
+      const r = sandbox.getBoundingClientRect();
+      sandboxCanvas.width = r.width;
+      sandboxCanvas.height = r.height;
+    }
+  }
+  window.addEventListener('resize', resizeSandboxCanvas);
 
   if (sandbox) {
     sandbox.addEventListener('mouseenter', () => {
       isMouseInPlaygroundSandbox = true;
       document.querySelector('.sandbox-instructions').classList.add('hidden');
+      resizeSandboxCanvas();
       
-      // Hide global custom cursor elements so sandbox local cursor can draw
+      // Hide global custom cursor layers
       globalCanvas.style.display = 'none';
       globalGraphic.style.display = 'none';
       
-      // Update sandbox layouts
       updateSandboxCursorStyles();
       initLocalRope();
 
@@ -964,14 +1059,13 @@ document.addEventListener('DOMContentLoaded', () => {
       isMouseInPlaygroundSandbox = false;
       document.querySelector('.sandbox-instructions').classList.remove('hidden');
       
-      // Restore global cursor visibility
-      setCursorMode('bw'); // Trigger reset
-      updateActiveTheme(); // Restore theme
-      
+      setCursorMode('bw');
+      updateActiveTheme();
       clearSandboxFlies();
+      
+      if (globalCanvas) globalCanvas.style.display = 'block';
     });
 
-    // Handle local click swatting / shooting in sandbox
     sandbox.addEventListener('mousedown', (e) => {
       if (!isMouseInPlaygroundSandbox) return;
       const rect = sandbox.getBoundingClientRect();
@@ -986,7 +1080,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Sidebar selectors to change equipped sandbox cursors
   const selectors = document.querySelectorAll('.selector-btn');
   selectors.forEach(sel => {
     sel.addEventListener('click', () => {
@@ -994,7 +1087,6 @@ document.addEventListener('DOMContentLoaded', () => {
       sel.classList.add('active');
       
       equippedPlaygroundCursor = sel.getAttribute('data-cursor');
-      
       const parent = sel.closest('.playground-container');
       if (sel.classList.contains('premium-btn')) {
         parent.classList.add('premium-theme');
@@ -1006,11 +1098,6 @@ document.addEventListener('DOMContentLoaded', () => {
       initLocalRope();
     });
   });
-
-  // Local sandbox tuning state variables
-  let localPoints = [];
-  const localNumPoints = 12;
-  let localConfig = { length: 50, width: 3.0, size: 80 };
 
   const sliderLength = document.getElementById('ropeLength');
   const sliderWidth = document.getElementById('ropeWidth');
@@ -1046,25 +1133,25 @@ document.addEventListener('DOMContentLoaded', () => {
       localConfig.length = 50;
       localConfig.width = 3.0;
       localConfig.size = 80;
-      
       if (sliderLength) { sliderLength.value = 50; valLength.textContent = '50'; }
       if (sliderWidth) { sliderWidth.value = 3; valWidth.textContent = '3.0'; }
       if (sliderSize) { sliderSize.value = 80; valSize.textContent = '80'; }
-      
       initLocalRope();
       updateLocalGraphicDimensions();
     });
   }
 
   function initLocalRope() {
-    localPoints = [];
+    localPts = [];
+    localPrv = [];
     const rect = sandbox.getBoundingClientRect();
     const rx = mouse.x - rect.left;
     const ry = mouse.y - rect.top;
     
-    const segmentLength = localConfig.length / (localNumPoints - 1);
     for (let i = 0; i < localNumPoints; i++) {
-      localPoints.push({ x: rx, y: ry, oldx: rx, oldy: ry });
+      const p = { x: rx, y: ry };
+      localPts.push(p);
+      localPrv.push({ ...p });
     }
   }
 
@@ -1072,7 +1159,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sandboxCursorGraphic) {
       sandboxCursorGraphic.style.width = `${localConfig.size}px`;
       sandboxCursorGraphic.style.height = `${localConfig.size}px`;
-      
       if (equippedPlaygroundCursor === 'swatter') {
         sandboxCursorGraphic.style.transform = `translate(-${localConfig.size / 2}px, -${localConfig.size / 2}px)`;
       } else if (equippedPlaygroundCursor === 'fish') {
@@ -1113,18 +1199,16 @@ document.addEventListener('DOMContentLoaded', () => {
         sandboxCursorGraphic.style.backgroundImage = "url('assets/watergun.svg')";
         actionHint.textContent = 'Click to shoot water blaster!';
       }
-      
       updateLocalGraphicDimensions();
     }
   }
 
-  // Local sandbox flies game logic
+  // Local sandbox flies
   let sandboxFlies = [];
   const maxSandboxFlies = 4;
-  
+
   function spawnSandboxFly() {
     if (!isMouseInPlaygroundSandbox || equippedPlaygroundCursor !== 'swatter' || sandboxFlies.length >= maxSandboxFlies) return;
-    
     const fly = document.createElement('div');
     fly.className = 'sandbox-fly';
     fly.style.backgroundImage = "url('assets/achievements/first_fly.svg')";
@@ -1138,7 +1222,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     fly.style.left = `${x}px`;
     fly.style.top = `${y}px`;
-    
     fly.dataset.x = x;
     fly.dataset.y = y;
     fly.dataset.vx = (Math.random() - 0.5) * 4.5;
@@ -1166,7 +1249,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fvx = (fvx / speed) * 5;
         fvy = (fvy / speed) * 5;
       }
-      
       fx += fvx;
       fy += fvy;
       
@@ -1195,10 +1277,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function runSandboxSwat(x, y) {
     playSynthSplat();
-    
     sandboxCursorGraphic.style.transition = 'transform 0.05s ease-out';
     sandboxCursorGraphic.style.transform = `translate(-${localConfig.size / 2}px, -${localConfig.size / 2}px) scale(0.7) rotate(-20deg)`;
-    
     setTimeout(() => {
       sandboxCursorGraphic.style.transition = 'none';
       updateLocalGraphicDimensions();
@@ -1206,14 +1286,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const hitSize = 35 + (localConfig.size / 4);
     const surviving = [];
-    
     sandboxFlies.forEach(fly => {
       const fx = parseFloat(fly.dataset.x);
       const fy = parseFloat(fly.dataset.y);
       const dist = Math.sqrt(Math.pow(fx - x, 2) + Math.pow(fy - y, 2));
-      
       if (dist <= hitSize) {
-        // Splat fly
         createSandboxSplat(fx, fy);
         fly.remove();
       } else {
@@ -1236,10 +1313,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function runSandboxWaterBlast(x, y) {
     playSynthWater();
-    
     sandboxCursorGraphic.style.transition = 'transform 0.05s ease-out';
     sandboxCursorGraphic.style.transform = `translate(-${localConfig.size / 2}px, -${localConfig.size / 4}px) translateY(8px) scale(0.92)`;
-    
     setTimeout(() => {
       sandboxCursorGraphic.style.transition = 'none';
       updateLocalGraphicDimensions();
@@ -1249,18 +1324,17 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < 5; i++) {
       const drop = document.createElement('div');
       drop.className = 'water-droplet';
-      drop.style.left = `${x}px`;
-      drop.style.top = `${y - 15}px`;
+      drop.style.left = `${x + sandbox.getBoundingClientRect().left}px`;
+      drop.style.top = `${y + sandbox.getBoundingClientRect().top - 15}px`;
       
       const angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.4;
       const speed = 6 + Math.random() * 6;
-      
       drop.dataset.vx = Math.cos(angle) * speed;
       drop.dataset.vy = Math.sin(angle) * speed;
-      drop.dataset.x = x;
-      drop.dataset.y = y - 15;
+      drop.dataset.x = x + sandbox.getBoundingClientRect().left;
+      drop.dataset.y = y + sandbox.getBoundingClientRect().top - 15;
       
-      waterContainer.appendChild(drop);
+      document.body.appendChild(drop);
       animateWaterDrop(drop);
     }
   }
@@ -1275,50 +1349,66 @@ document.addEventListener('DOMContentLoaded', () => {
       while (diff < -180) diff += 360;
       while (diff > 180) diff -= 360;
       localFishAngle += diff * 0.15;
-      
       if (speed > 7 && Math.random() < 0.15) {
         playSynthFish();
       }
     }
-    
     if (speed > 0.5) {
       localFishWobble += speed * 0.08;
     } else {
       localFishWobble += 0.04;
     }
-    
     const wiggle = Math.sin(localFishWobble) * 12;
     sandboxCursorGraphic.style.transform = `translate(-50%, -50%) rotate(${localFishAngle + wiggle}deg)`;
   }
 
-  // Sandbox local physics rope solver
-  let sandboxLastCrackTime = 0;
-  function updateSandboxRopePhysics(sandboxX, sandboxY) {
-    if (localPoints.length === 0) return;
+  function getLocalHandle(x, y, vx) {
+    localTilt += (vx * 0.01 - localTilt) * 0.08;
+    const clampedTilt = Math.max(-0.35, Math.min(0.35, localTilt));
+    const ang = Math.PI / 2 + clampedTilt;
+    const dirX = Math.cos(ang);
+    const dirY = Math.sin(ang);
+    const perpX = -dirY;
+    const perpY = dirX;
+    const topX = x;
+    const topY = y;
+    const botX = x + dirX * HANDLE_LEN;
+    const botY = y + dirY * HANDLE_LEN;
+    return { topX, topY, botX, botY, ang, perpX, perpY, dirX, dirY };
+  }
+
+  // Local sandbox solver loop
+  function updateSandboxRopePhysics(sandboxX, sandboxY, vx) {
+    if (localPts.length === 0 || !sandboxCtx) return;
     
-    localPoints[0].x = sandboxX;
-    localPoints[0].y = sandboxY;
+    // Clear canvas
+    sandboxCtx.clearRect(0, 0, sandboxCanvas.width, sandboxCanvas.height);
+
+    const h = getLocalHandle(sandboxX, sandboxY, vx);
+    localPts[0].x = h.topX;
+    localPts[0].y = h.topY;
+    localPrv[0].x = h.topX - vx * 0.1;
+    localPrv[0].y = h.topY;
 
     for (let i = 1; i < localNumPoints; i++) {
-      const p = localPoints[i];
-      const vx = (p.x - p.oldx) * friction;
-      const vy = (p.y - p.oldy) * friction + gravity;
-      p.oldx = p.x;
-      p.oldy = p.y;
-      p.x += vx;
-      p.y += vy;
+      const p = localPts[i];
+      const pvx = (p.x - localPrv[i].x) * friction;
+      const pvy = (p.y - localPrv[i].y) * friction + gravity;
+      localPrv[i].x = p.x;
+      localPrv[i].y = p.y;
+      p.x += pvx;
+      p.y += pvy;
     }
 
     const segmentLength = localConfig.length / (localNumPoints - 1);
     for (let loop = 0; loop < 5; loop++) {
       for (let i = 1; i < localNumPoints; i++) {
-        const p1 = localPoints[i - 1];
-        const p2 = localPoints[i];
+        const p1 = localPts[i - 1];
+        const p2 = localPts[i];
         
         const dx = p2.x - p1.x;
         const dy = p2.y - p1.y;
         const dist = Math.sqrt(dx*dx + dy*dy);
-        
         if (dist === 0) continue;
         
         const diff = segmentLength - dist;
@@ -1338,21 +1428,20 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Draw sandbox rope
-    drawSandboxRope();
+    drawCanvasHandle(sandboxCtx, h, equippedPlaygroundCursor);
+    drawCanvasRope(sandboxCtx, localPts, equippedPlaygroundCursor, localConfig.width);
 
-    // Crack detection
-    const tip = localPoints[localNumPoints - 1];
-    const dx = tip.x - tip.oldx;
-    const dy = tip.y - tip.oldy;
-    const tipSpeed = Math.sqrt(dx*dx + dy*dy);
+    // Sandbox crack check (1 second cooldown)
+    const tip = localPts[localNumPoints - 1];
+    const tdx = tip.x - localPrv[localNumPoints - 1].x;
+    const tdy = tip.y - localPrv[localNumPoints - 1].y;
+    const tipSpeed = Math.sqrt(tdx*tdx + tdy*tdy);
     const now = Date.now();
-    
-    if (tipSpeed > 32 && now - sandboxLastCrackTime > 260) {
+
+    if (tipSpeed > CRACK_SPD && now - localLastCrackTime > crackCooldownTime) {
       playWhipCrack();
-      sandboxLastCrackTime = now;
+      localLastCrackTime = now;
       
-      // Splat overlay inside sandbox area
       const splat = document.createElement('div');
       splat.className = 'splat-effect active';
       splat.style.left = `${tip.x}px`;
@@ -1362,81 +1451,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function drawSandboxRope() {
-    if (localPoints.length === 0) return;
-    
-    while (sandboxCanvas.firstChild) {
-      sandboxCanvas.removeChild(sandboxCanvas.firstChild);
-    }
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    
-    // Handle coordinates alignment
-    const dx = localPoints[1].x - localPoints[0].x;
-    const dy = localPoints[1].y - localPoints[0].y;
-    const dist = Math.sqrt(dx*dx + dy*dy) || 1;
-    const hLength = 22;
-    const hx = localPoints[0].x + (dx / dist) * hLength;
-    const hy = localPoints[0].y + (dy / dist) * hLength;
-
-    let d = `M ${hx} ${hy}`;
-    for (let i = 1; i < localNumPoints - 1; i++) {
-      const xc = (localPoints[i].x + localPoints[i + 1].x) / 2;
-      const yc = (localPoints[i].y + localPoints[i + 1].y) / 2;
-      d += ` Q ${localPoints[i].x} ${localPoints[i].y}, ${xc} ${yc}`;
-    }
-    d += ` L ${localPoints[localNumPoints - 1].x} ${localPoints[localNumPoints - 1].y}`;
-    
-    path.setAttribute('d', d);
-    path.setAttribute('fill', 'none');
-    
-    if (equippedPlaygroundCursor === 'bw') {
-      path.setAttribute('stroke', '#c8943a');
-    } else {
-      path.setAttribute('stroke', '#a6582a');
-    }
-    
-    path.setAttribute('stroke-width', localConfig.width);
-    path.setAttribute('stroke-linecap', 'round');
-    path.setAttribute('stroke-linejoin', 'round');
-
-    const cracker = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    const tipNode = localPoints[localNumPoints - 1];
-    cracker.setAttribute('cx', tipNode.x);
-    cracker.setAttribute('cy', tipNode.y);
-    cracker.setAttribute('r', Math.max(3, localConfig.width * 0.9));
-    cracker.setAttribute('fill', '#ff3333');
-
-    // Handle render
-    const handles = [];
-    const createLine = (color, width, dash = '') => {
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', localPoints[0].x);
-      line.setAttribute('y1', localPoints[0].y);
-      line.setAttribute('x2', hx);
-      line.setAttribute('y2', hy);
-      line.setAttribute('stroke', color);
-      line.setAttribute('stroke-width', width);
-      line.setAttribute('stroke-linecap', 'round');
-      if (dash) line.setAttribute('stroke-dasharray', dash);
-      return line;
-    };
-
-    if (equippedPlaygroundCursor === 'bw') {
-      handles.push(createLine('#000000', localConfig.width * 2.5));
-      handles.push(createLine('#ffffff', localConfig.width * 1.3));
-    } else {
-      handles.push(createLine('#3a1800', localConfig.width * 2.6));
-      handles.push(createLine('#8b4513', localConfig.width * 1.4));
-      handles.push(createLine('#5e2510', localConfig.width * 0.7, '2 3'));
-    }
-
-    sandboxCanvas.appendChild(path);
-    sandboxCanvas.appendChild(cracker);
-    handles.forEach(h => sandboxCanvas.appendChild(h));
-  }
-
-  // --- Main Render Frame Tick Loop ---
+  // --- Main Tick Render Loop ---
   function tick() {
     updateActiveTheme();
 
@@ -1444,20 +1459,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const rect = sandbox.getBoundingClientRect();
       const rx = mouse.x - rect.left;
       const ry = mouse.y - rect.top;
+      const vx = mouse.x - lastMouse.x;
       
       if (equippedPlaygroundCursor === 'bw' || equippedPlaygroundCursor === 'leather') {
-        updateSandboxRopePhysics(rx, ry);
+        updateSandboxRopePhysics(rx, ry, vx);
       } else {
-        // Align graphic cursor coordinates
         sandboxCursorGraphic.style.left = `${rx}px`;
         sandboxCursorGraphic.style.top = `${ry}px`;
         
         if (equippedPlaygroundCursor === 'fish') {
-          const dx = rx - parseFloat(sandboxCursorGraphic.dataset.lastX || rx);
           const dy = ry - parseFloat(sandboxCursorGraphic.dataset.lastY || ry);
-          updateLocalFishRotation(dx, dy);
+          updateLocalFishRotation(vx, dy);
         }
-        
         sandboxCursorGraphic.dataset.lastX = rx;
         sandboxCursorGraphic.dataset.lastY = ry;
       }
@@ -1469,16 +1482,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } else {
-      // Run global rope solver if active whip
       if (isWhipMode(currentCursorMode)) {
-        updateRopePhysics();
+        updateGlobalRopePhysics();
+      } else {
+        if (globalCtx) {
+          globalCtx.clearRect(0, 0, globalCanvas.width, globalCanvas.height);
+        }
       }
     }
 
     requestAnimationFrame(tick);
   }
 
-  // Run main execution loop
+  // Start loop
   requestAnimationFrame(tick);
 
 });
