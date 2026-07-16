@@ -34,6 +34,12 @@
 </head>
 <body>
 
+  <!-- Global Custom Cursor Overlay -->
+  <div id="global-cursor" class="global-cursor">
+    <svg id="global-whip-canvas" class="global-whip-canvas"></svg>
+    <div id="global-cursor-graphic" class="global-cursor-graphic"></div>
+  </div>
+
   <!-- Background Gradients -->
   <div class="bg-glow bg-glow-1"></div>
   <div class="bg-glow bg-glow-2"></div>
@@ -77,13 +83,13 @@
   </header>
 
   <!-- Hero Section -->
-  <section class="hero-section">
+  <section class="hero-section section-hero">
     <div class="container hero-container">
       <div class="hero-content">
         <div class="badge-container">
           <span class="badge-glow">Version 2.7 Now Live</span>
         </div>
-        <h1 class="hero-title">Crack the Whip on <span class="gradient-text animate-pulse">Your AI Tools</span></h1>
+        <h1 class="hero-title">Crack the Whip on <span class="gradient-text">Your AI Tools</span></h1>
         <p class="hero-subtitle">
           Tired of boring, static cursors? Turn your mouse pointer into a physical whip, fly swatter, or water gun. Interact dynamically with ChatGPT, Claude, Gemini, and Perplexity, while streamlining prompts with template injections.
         </p>
@@ -116,9 +122,9 @@
         </div>
       </div>
       
-      <!-- Interactive Hero Graphic -->
+      <!-- Interactive ChatGPT Browser Simulator -->
       <div class="hero-visual">
-        <div class="glass-card mockup-card">
+        <div class="glass-card mockup-card" id="heroMockup">
           <div class="mockup-header">
             <div class="mockup-dots">
               <span></span>
@@ -126,55 +132,128 @@
               <span></span>
             </div>
             <div class="mockup-tab">ChatGPT</div>
-          </div>
-          <div class="mockup-body">
-            <div class="chat-bubble ai">
-              <div class="avatar-mock">AI</div>
-              <div class="bubble-content">
-                <p>Hello! How can I assist you with your task today?</p>
-              </div>
-            </div>
-            <div class="chat-bubble user">
-              <div class="bubble-content">
-                <p>Analyze this data for me.</p>
-              </div>
-              <div class="avatar-mock user-avatar">U</div>
-            </div>
-            <div class="chat-bubble ai animate-shatter-target" id="mockupAITarget">
-              <div class="avatar-mock">AI</div>
-              <div class="bubble-content">
-                <p class="target-text">Whack this bubble to trigger a whip crack!</p>
-                <div class="splat-effect" id="mockupSplat"></div>
-              </div>
-            </div>
-          </div>
-          <!-- Prompt Templates preview -->
-          <div class="mockup-injections">
-            <div class="injection-badge"><span class="badge-dot"></span> Practical Mode Active</div>
-            <div class="injection-pills">
-              <span>JSON Format</span>
-              <span>Refactor Code</span>
-              <span>Summarize</span>
+            
+            <!-- Interactive Simulator Mode Toggle -->
+            <div class="mockup-header-actions">
+              <button class="mockup-toggle-btn active" id="mockupToggleFun">Fun Mode</button>
+              <button class="mockup-toggle-btn" id="mockupTogglePrac">Practical Mode</button>
             </div>
           </div>
           
-          <!-- Classic Whip Floating Preview -->
-          <div class="floating-whip-preview">
-            <svg viewBox="0 0 64 64" width="64" height="64">
-              <line x1="16" y1="48" x2="28" y2="36" stroke="#c8943a" stroke-width="8" stroke-linecap="round" />
-              <line x1="16" y1="48" x2="28" y2="36" stroke="#fff" stroke-width="4" stroke-linecap="round" />
-              <path d="M 28 36 Q 15 15, 36 24 T 56 20" fill="none" stroke="#c8943a" stroke-width="5" stroke-linecap="round" />
-              <path d="M 28 36 Q 15 15, 36 24 T 56 20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" />
-              <circle cx="56" cy="20" r="3" fill="#ff3333" />
-            </svg>
+          <div class="mockup-body" id="mockupChatBody">
+            <!-- AI Welcome Bubble -->
+            <div class="chat-bubble ai ai-bubble-target">
+              <div class="avatar-mock">AI</div>
+              <div class="bubble-content">
+                <p>Hello! How can I assist you with your task today?</p>
+                <div class="splat-effect"></div>
+              </div>
+            </div>
+            
+            <!-- User Prompt Bubble -->
+            <div class="chat-bubble user">
+              <div class="bubble-content">
+                <p>Help me format my data or optimize code.</p>
+              </div>
+              <div class="avatar-mock user-avatar">U</div>
+            </div>
+            
+            <!-- Interactive AI target -->
+            <div class="chat-bubble ai ai-bubble-target">
+              <div class="avatar-mock">AI</div>
+              <div class="bubble-content">
+                <p class="target-text">Whack this bubble with your whip to crack it!</p>
+                <div class="splat-effect"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Prompt Templates panel -->
+          <div class="mockup-injections" id="mockupInjectionsPanel">
+            <div class="injection-badge"><span class="badge-dot"></span> Practical Mode Active</div>
+            <div class="injection-pills">
+              <span class="mockup-pill" data-prompt="Inject JSON formatter output templates into all active fields.">JSON Format</span>
+              <span class="mockup-pill" data-prompt="Review this code block and optimize it for runtime performance.">Optimize Code</span>
+              <span class="mockup-pill" data-prompt="Summarize the core takeaways of this document in 3 bullet points.">Summarize</span>
+            </div>
+            <div class="mockup-input-row">
+              <div class="mockup-textbox" id="mockupTextbox">Type a prompt...</div>
+              <div class="mockup-send-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Core Features Section -->
+  <section id="features" class="features-section section-features">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">Unleash Ultimate <span class="gold-text">Cursor Control</span></h2>
+        <p class="section-subtitle">
+          More than just a visual gimmick. WHIP Cursor balances physics-based entertainment with high-efficiency productivity tools.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c8943a" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h3>Realistic Physics Engine</h3>
+          <p>
+            Experience realistic rope physics. The whip string moves dynamically following your cursor's acceleration, weight, and friction, creating satisfying flicks at 60 FPS.
+          </p>
+        </div>
+
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c8943a" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+          </div>
+          <h3>Practical Prompt Injection</h3>
+          <p>
+            Switch to Practical Mode to toggle off visual physics and turn your cursor into a prompt power tool. Instantly insert reusable prompt templates into any text inputs.
+          </p>
+        </div>
+
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c8943a" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            </svg>
+          </div>
+          <h3>Dynamic Audio Triggers</h3>
+          <p>
+            Get instant acoustic satisfaction. Whip cracks are triggered by velocity thresholds. Each weapon has unique audio profiles, including flies buzzing and water splashing.
+          </p>
+        </div>
+
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c8943a" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+          </div>
+          <h3>Interactive Customization</h3>
+          <p>
+            Fine-tune variables directly within the extension popup. Edit length, slot scale, grip size, and trace color to build a whip style that fits your display layout.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Interactive Playground Section -->
-  <section id="playground" class="playground-section">
+  <section id="playground" class="playground-section section-playground">
     <div class="container">
       <div class="section-header text-center">
         <h2 class="section-title">Experience the <span class="gold-text">Physics Sandbox</span></h2>
@@ -260,7 +339,7 @@
             <div class="toggle-group">
               <label for="soundToggle" class="toggle-label">
                 <span>Sound Effects</span>
-                <span class="toggle-sub">Synthesized Web Audio</span>
+                <span class="toggle-sub">Preloaded MP3 File</span>
               </label>
               <div class="checkbox-wrapper">
                 <input type="checkbox" id="soundToggle" checked>
@@ -282,9 +361,8 @@
             <span class="sandbox-action-hint" id="sandboxActionHint">Flick fast to crack the whip!</span>
           </div>
 
-          <!-- HTML element to act as the custom physical cursor -->
+          <!-- Sandbox-specific custom physics graphics (drawn only when inside sandbox) -->
           <div class="physics-cursor-container" id="physicsCursorContainer">
-            <!-- Simulated elements will draw inside here -->
             <svg id="whipRopeCanvas" class="whip-canvas"></svg>
             <div id="cursorGraphic" class="cursor-graphic"></div>
           </div>
@@ -296,70 +374,8 @@
     </div>
   </section>
 
-  <!-- Core Features Section -->
-  <section id="features" class="features-section">
-    <div class="container">
-      <div class="section-header text-center">
-        <h2 class="section-title">Unleash Ultimate <span class="gold-text">Cursor Control</span></h2>
-        <p class="section-subtitle">
-          More than just a visual gimmick. WHIP Cursor balances physics-based entertainment with high-efficiency productivity tools.
-        </p>
-      </div>
-
-      <div class="features-grid">
-        <div class="feature-card glass-card">
-          <div class="feature-icon-wrapper">
-            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c8943a" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <h3>Realistic Physics Engine</h3>
-          <p>
-            Experience realistic rope physics. The whip string moves dynamically following your cursor's acceleration, weight, and friction, creating satisfying flicks at 60 FPS.
-          </p>
-        </div>
-
-        <div class="feature-card glass-card">
-          <div class="feature-icon-wrapper">
-            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c8943a" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
-          </div>
-          <h3>Practical Prompt Injection</h3>
-          <p>
-            Switch to Practical Mode to toggle off visual physics and turn your cursor into a prompt power tool. Instantly insert reusable prompt templates into any text inputs.
-          </p>
-        </div>
-
-        <div class="feature-card glass-card">
-          <div class="feature-icon-wrapper">
-            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c8943a" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-            </svg>
-          </div>
-          <h3>Dynamic Audio Triggers</h3>
-          <p>
-            Get instant acoustic satisfaction. Whip cracks are triggered by velocity thresholds. Each weapon has unique audio profiles, including flies buzzing and water splashing.
-          </p>
-        </div>
-
-        <div class="feature-card glass-card">
-          <div class="feature-icon-wrapper">
-            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c8943a" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-          </div>
-          <h3>Interactive Customization</h3>
-          <p>
-            Fine-tune variables directly within the extension popup. Edit length, slot scale, grip size, and trace color to build a whip style that fits your display layout.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Premium Section -->
-  <section id="premium" class="premium-section">
+  <section id="premium" class="premium-section section-premium">
     <div class="container">
       <div class="premium-badge text-center">
         <span class="badge-premium">👑 WHIP Premium</span>
@@ -386,7 +402,7 @@
         <div class="premium-card">
           <div class="premium-card-border"></div>
           <div class="premium-card-content">
-            <div class="card-icon cyan-text">🔫</div>
+            <div class="card-icon cyan-text">👑</div>
             <h3>Exclusive Premium Cursors</h3>
             <p>
               Unlock access to elite premium cursors: the Water Gun 🔫, Diamond Whip 💎, Fire Whip 🔥, and Electric Whip ⚡. Each features custom particle effects and graphics.
@@ -420,7 +436,7 @@
   </section>
 
   <!-- Achievements Section -->
-  <section id="achievements" class="achievements-section">
+  <section id="achievements" class="achievements-section section-achievements">
     <div class="container">
       <div class="section-header text-center">
         <h2 class="section-title">Unlockable <span class="gold-text">Achievements</span></h2>
@@ -437,7 +453,7 @@
   </section>
 
   <!-- CTA Banner -->
-  <section class="cta-section">
+  <section class="cta-section section-cta">
     <div class="container">
       <div class="cta-card glass-card text-center">
         <div class="cta-bg-glow"></div>
@@ -457,7 +473,7 @@
   </section>
 
   <!-- Footer -->
-  <footer class="footer">
+  <footer class="footer section-cta">
     <div class="container footer-container">
       <div class="footer-info">
         <div class="logo">

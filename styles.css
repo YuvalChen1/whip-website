@@ -52,6 +52,15 @@ body {
   line-height: 1.6;
 }
 
+/* Global Cursor Hiding (when cursor active) */
+body, .playground-sandbox, .mockup-card {
+  cursor: none !important;
+}
+
+a, button, select, input, textarea, label, [role="button"], .selector-btn, .tab, .mockup-pill, .mockup-toggle-btn {
+  cursor: none !important;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 700;
@@ -69,11 +78,104 @@ button {
   font-family: var(--font-sans);
   background: none;
   border: none;
-  cursor: pointer;
   outline: none;
 }
 
-/* Background Glow Effects */
+/* Global Custom Cursor Overlay */
+.global-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  display: block; /* Managed by JS opacity */
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.global-whip-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.global-cursor-graphic {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  pointer-events: none;
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: none;
+  transform: translate(-16px, -48px); /* Handle offset */
+  transition: width 0.12s, height 0.12s, transform 0.12s, background-color 0.12s, border-radius 0.12s;
+}
+
+/* Morph dot when hovering interactive items */
+.global-cursor.hovering-interactive .global-whip-canvas {
+  opacity: 0;
+  transition: opacity 0.1s ease-out;
+}
+
+.global-cursor.hovering-interactive .global-cursor-graphic {
+  display: block !important;
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  background-color: var(--color-gold) !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 0 10px var(--color-gold) !important;
+  transform: translate(-50%, -50%) !important;
+  background-image: none !important;
+}
+
+.global-cursor.hovering-interactive.premium-dot .global-cursor-graphic {
+  background-color: var(--color-cyan) !important;
+  box-shadow: 0 0 10px var(--color-cyan) !important;
+}
+
+/* Cursor Particles System */
+.cursor-particle {
+  position: fixed;
+  pointer-events: none;
+  border-radius: 50%;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+}
+
+.particle-fire {
+  background: radial-gradient(circle, #ff8c00 0%, #e63900 80%, transparent 100%);
+  box-shadow: 0 0 6px #e63900;
+  animation: fadeParticle 0.6s linear forwards;
+}
+
+.particle-electric {
+  background: #00e5ff;
+  box-shadow: 0 0 6px #00e5ff, 0 0 12px rgba(0, 229, 255, 0.4);
+  width: 3px;
+  height: 12px; /* Spark lines */
+  border-radius: 2px;
+  animation: fadeParticle 0.4s linear forwards;
+}
+
+.particle-diamond {
+  background: #ffffff;
+  box-shadow: 0 0 4px #00e5ff, 0 0 8px #ffffff;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); /* Diamond shape */
+  animation: fadeParticle 0.5s linear forwards;
+}
+
+@keyframes fadeParticle {
+  0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.2) rotate(90deg); opacity: 0; }
+}
+
+/* Section Themes & Glows */
 .bg-glow {
   position: absolute;
   width: 50vw;
@@ -99,7 +201,73 @@ button {
   background: radial-gradient(circle, var(--color-cyan) 0%, transparent 80%);
 }
 
-/* Container */
+/* Fiery Features Theme */
+.section-features {
+  position: relative;
+  background: linear-gradient(180deg, #0a0a0a 0%, #150907 50%, #0a0a0a 100%);
+  border-top: 1px solid rgba(230, 57, 0, 0.05);
+  border-bottom: 1px solid rgba(230, 57, 0, 0.05);
+}
+
+.section-features .section-title .gold-text {
+  color: #ff5500;
+  text-shadow: 0 0 10px rgba(230, 57, 0, 0.2);
+}
+
+.section-features .feature-card:hover {
+  border-color: rgba(230, 57, 0, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(230, 57, 0, 0.08);
+}
+
+.section-features .feature-icon-wrapper {
+  background: rgba(230, 57, 0, 0.08);
+  border-color: rgba(230, 57, 0, 0.2);
+}
+
+.section-features .feature-icon-wrapper svg {
+  stroke: #ff5500;
+}
+
+/* Electric Premium Theme */
+.section-premium {
+  position: relative;
+  background: linear-gradient(180deg, #0a0a0a 0%, #03141a 50%, #0a0a0a 100%);
+  border-top: 1px solid rgba(0, 229, 255, 0.05);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.05);
+}
+
+.section-premium .premium-card-border {
+  background: linear-gradient(90deg, var(--color-cyan) 0%, #0077aa 100%);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+}
+
+/* Diamond Achievements Theme */
+.section-achievements {
+  position: relative;
+  background: linear-gradient(180deg, #0a0a0a 0%, #0c1417 50%, #0a0a0a 100%);
+}
+
+.section-achievements .achievement-card:hover {
+  border-color: var(--color-border-cyan);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.05);
+}
+
+/* Water Gun CTA Theme */
+.section-cta {
+  position: relative;
+  background: linear-gradient(180deg, #0a0a0a 0%, #030e1b 50%, #050505 100%);
+}
+
+.section-cta .cta-card {
+  border-color: rgba(0, 229, 255, 0.2);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 35px rgba(0, 229, 255, 0.06);
+}
+
+.section-cta .cta-bg-glow {
+  background: radial-gradient(circle, var(--color-cyan) 0%, transparent 70%);
+}
+
+/* Container & Global Helpers */
 .container {
   width: 100%;
   max-width: 1200px;
@@ -144,7 +312,6 @@ button {
   font-weight: 600;
   border-radius: var(--radius-sm);
   transition: var(--transition-normal);
-  cursor: pointer;
   white-space: nowrap;
 }
 
@@ -373,7 +540,7 @@ button {
   background-color: var(--color-border);
 }
 
-/* Interactive Hero Mockup Card */
+/* Interactive ChatGPT Simulator */
 .hero-visual {
   display: flex;
   justify-content: center;
@@ -383,7 +550,7 @@ button {
 .mockup-card {
   width: 100%;
   max-width: 460px;
-  aspect-ratio: 4 / 4.2;
+  aspect-ratio: 4 / 4.3;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -392,8 +559,8 @@ button {
 }
 
 .mockup-header {
-  height: 40px;
-  background: rgba(0, 0, 0, 0.2);
+  height: 44px;
+  background: rgba(0, 0, 0, 0.25);
   border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
@@ -403,6 +570,7 @@ button {
 .mockup-dots {
   display: flex;
   gap: 6px;
+  margin-right: 12px;
 }
 
 .mockup-dots span {
@@ -417,7 +585,6 @@ button {
 .mockup-dots span:nth-child(3) { background: #27c93f; }
 
 .mockup-tab {
-  margin-left: 20px;
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-text-secondary);
@@ -426,6 +593,46 @@ button {
   border-radius: 4px 4px 0 0;
   border: 1px solid var(--color-border);
   border-bottom: none;
+}
+
+/* Toggle mode controls in mockup */
+.mockup-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.mockup-mode-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: 4px;
+}
+
+.mockup-toggle-btn {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: var(--transition-fast);
+}
+
+.mockup-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.mockup-toggle-btn.active {
+  background: var(--color-gold);
+  color: #121212;
+  border-color: var(--color-gold-hover);
+  box-shadow: 0 0 6px var(--color-gold-glow);
 }
 
 .mockup-body {
@@ -485,32 +692,28 @@ button {
   border-color: rgba(200, 148, 58, 0.15);
 }
 
-.animate-shatter-target {
-  cursor: pointer;
-  transition: transform 0.1s ease;
+.ai-bubble-target {
+  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.animate-shatter-target:hover {
-  transform: scale(1.02);
+.ai-bubble-target.wobbling {
+  animation: bubbleWobble 0.5s ease-out forwards;
 }
 
-.animate-shatter-target.shattered {
-  animation: shatterEffect 0.5s ease forwards;
-}
-
-@keyframes shatterEffect {
-  0% { transform: scale(1); filter: brightness(1); }
-  20% { transform: scale(0.95) rotate(1deg); filter: brightness(1.5) drop-shadow(0 0 10px var(--color-gold)); }
-  40% { transform: scale(1.05) rotate(-1deg); }
-  60% { transform: scale(0.98); }
-  100% { transform: scale(1); }
+@keyframes bubbleWobble {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.04) skewX(2deg) translateY(-2px); }
+  30% { transform: scale(0.98) skewX(-2deg) translateY(1px); }
+  45% { transform: scale(1.02) skewX(1deg); }
+  60% { transform: scale(0.99) skewX(-1deg); }
+  75% { transform: scale(1.005); }
 }
 
 .target-text {
   transition: color 0.3s;
 }
 
-.shattered .target-text {
+.ai-bubble-target.wobbling .target-text {
   color: var(--color-gold-hover);
   font-weight: 600;
 }
@@ -532,13 +735,20 @@ button {
   transform: translate(-50%, -50%) scale(1.5);
 }
 
+/* Mockup Prompt injections footer */
 .mockup-injections {
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.18);
   border-top: 1px solid var(--color-border);
   padding: 12px 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  transition: opacity 0.3s ease;
+}
+
+.mockup-injections.disabled {
+  opacity: 0.25;
+  pointer-events: none;
 }
 
 .injection-badge {
@@ -580,18 +790,51 @@ button {
   white-space: nowrap;
 }
 
-.floating-whip-preview {
-  position: absolute;
-  bottom: 60px;
-  right: -25px;
-  z-index: 10;
-  animation: float 4s ease-in-out infinite;
-  pointer-events: none;
+.mockup-pill {
+  transition: var(--transition-fast);
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0) rotate(5deg); }
-  50% { transform: translateY(-12px) rotate(8deg); }
+.mockup-pill:hover {
+  background: rgba(200, 148, 58, 0.15) !important;
+  border-color: var(--color-gold) !important;
+  color: var(--color-gold-hover) !important;
+}
+
+.mockup-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-top: 4px;
+}
+
+.mockup-textbox {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  flex: 1;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mockup-textbox.typing {
+  color: var(--color-text-primary);
+}
+
+.mockup-send-icon {
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  transition: var(--transition-fast);
+}
+
+.mockup-send-icon.active {
+  color: var(--color-gold);
+  transform: scale(1.1);
 }
 
 /* Section Header */
@@ -609,6 +852,46 @@ button {
 .section-subtitle {
   color: var(--color-text-secondary);
   font-size: 1.05rem;
+}
+
+/* Features Grid */
+.features-section {
+  padding: 100px 0;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+}
+
+.feature-card {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+}
+
+.feature-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.feature-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+}
+
+.feature-card p {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
 }
 
 /* Interactive Playground Section */
@@ -755,7 +1038,6 @@ input[type=range]::-webkit-slider-thumb {
   width: 16px;
   border-radius: 50%;
   background: var(--color-gold);
-  cursor: pointer;
   box-shadow: 0 0 8px rgba(200, 148, 58, 0.5);
   transition: transform 0.1s;
 }
@@ -764,7 +1046,7 @@ input[type=range]::-webkit-slider-thumb:hover {
   transform: scale(1.2);
 }
 
-.playground-container .premium-theme input[type=range]::-webkit-slider-thumb {
+.playground-container.premium-theme input[type=range]::-webkit-slider-thumb {
   background: var(--color-cyan);
   box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
 }
@@ -792,7 +1074,6 @@ input[type=range]::-webkit-slider-thumb:hover {
   color: var(--color-text-muted);
 }
 
-/* Simple Custom Checkbox */
 .checkbox-wrapper {
   position: relative;
   width: 42px;
@@ -807,7 +1088,6 @@ input[type=range]::-webkit-slider-thumb:hover {
 
 .checkbox-slider {
   position: absolute;
-  cursor: pointer;
   top: 0;
   left: 0;
   right: 0;
@@ -839,18 +1119,26 @@ input[type=range]::-webkit-slider-thumb:hover {
   background-color: var(--color-gold-hover);
 }
 
+.playground-container.premium-theme .checkbox-wrapper input:checked + .checkbox-slider {
+  background-color: rgba(0, 229, 255, 0.3);
+  border-color: var(--color-cyan);
+}
+
+.playground-container.premium-theme .checkbox-wrapper input:checked + .checkbox-slider:before {
+  background-color: var(--color-cyan-hover);
+}
+
 .playground-sandbox {
   position: relative;
   overflow: hidden;
-  background: radial-gradient(rgba(200, 148, 58, 0.05) 1px, transparent 1px);
+  background: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 24px 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: none; /* Hide default cursor inside sandbox */
 }
 
-/* Custom cursor graphics */
+/* Sandbox custom cursor graphics container */
 .physics-cursor-container {
   position: absolute;
   top: 0;
@@ -875,10 +1163,10 @@ input[type=range]::-webkit-slider-thumb:hover {
   width: 64px;
   height: 64px;
   pointer-events: none;
-  transform: translate(-16px, -48px); /* Line up handle with cursor position */
   background-size: contain;
   background-repeat: no-repeat;
   display: none;
+  transform: translate(-16px, -48px);
 }
 
 /* Instructions */
@@ -892,6 +1180,7 @@ input[type=range]::-webkit-slider-thumb:hover {
   text-align: center;
   pointer-events: none;
   transition: var(--transition-normal);
+  z-index: 2;
 }
 
 .sandbox-instructions svg {
@@ -912,11 +1201,15 @@ input[type=range]::-webkit-slider-thumb:hover {
   opacity: 0.8;
 }
 
+.playground-container.premium-theme .sandbox-action-hint {
+  color: var(--color-cyan);
+}
+
 .sandbox-instructions.hidden {
   opacity: 0;
 }
 
-/* Sandbox Targets - Fly Game */
+/* Sandbox fly splat & water gun droplet rules */
 .sandbox-fly {
   position: absolute;
   width: 24px;
@@ -924,7 +1217,6 @@ input[type=range]::-webkit-slider-thumb:hover {
   background-size: contain;
   background-repeat: no-repeat;
   z-index: 4;
-  cursor: none;
   transition: transform 0.1s ease;
 }
 
@@ -965,59 +1257,9 @@ input[type=range]::-webkit-slider-thumb:hover {
   100% { transform: translateY(80px) scale(0.2); opacity: 0; }
 }
 
-/* Features Section */
-.features-section {
-  padding: 100px 0;
-  position: relative;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 32px;
-}
-
-.feature-card {
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  position: relative;
-}
-
-.feature-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(200, 148, 58, 0.2);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 15px rgba(200, 148, 58, 0.05);
-}
-
-.feature-icon-wrapper {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  background: rgba(200, 148, 58, 0.08);
-  border: 1px solid var(--color-border-gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.feature-card h3 {
-  font-size: 1.4rem;
-  margin-bottom: 16px;
-}
-
-.feature-card p {
-  color: var(--color-text-secondary);
-  font-size: 0.95rem;
-}
-
-/* Premium Section */
+/* Premium Benefits Section Grid */
 .premium-section {
   padding: 100px 0;
-  position: relative;
 }
 
 .premium-badge {
@@ -1062,7 +1304,6 @@ input[type=range]::-webkit-slider-thumb:hover {
   left: 0;
   width: 100%;
   height: 4px;
-  background: linear-gradient(90deg, var(--color-cyan) 0%, #0077aa 100%);
   opacity: 0.7;
 }
 
@@ -1120,7 +1361,7 @@ input[type=range]::-webkit-slider-thumb:hover {
   border: 1px solid rgba(255, 255, 255, 0.02);
 }
 
-/* Custom Scrollbar for scrollable grids */
+/* Scrollbars */
 .playground-sidebar::-webkit-scrollbar,
 .achievements-grid::-webkit-scrollbar {
   width: 6px;
@@ -1204,10 +1445,8 @@ input[type=range]::-webkit-slider-thumb:hover {
 
 .cta-card {
   padding: 80px 40px;
-  border-color: var(--color-border-gold);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(200, 148, 58, 0.05);
 }
 
 .cta-bg-glow {
@@ -1217,7 +1456,6 @@ input[type=range]::-webkit-slider-thumb:hover {
   transform: translate(-50%, -50%);
   width: 250px;
   height: 250px;
-  background: radial-gradient(circle, var(--color-gold) 0%, transparent 70%);
   filter: blur(80px);
   opacity: 0.12;
   z-index: -1;
@@ -1334,7 +1572,7 @@ input[type=range]::-webkit-slider-thumb:hover {
 
 @media (max-width: 768px) {
   .nav-links {
-    display: none; /* In production JS, this toggles */
+    display: none;
   }
   
   .mobile-toggle {
@@ -1361,7 +1599,7 @@ input[type=range]::-webkit-slider-thumb:hover {
   }
   
   .hero-visual {
-    order: -1; /* Display graphic first on mobile */
+    order: -1;
   }
   
   .playground-container {
@@ -1424,7 +1662,6 @@ input[type=range]::-webkit-slider-thumb:hover {
   }
 }
 
-/* Mobile responsive classes updated via JS */
 .nav-links.mobile-active {
   display: flex;
   flex-direction: column;
