@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     globalCtx = globalCanvas.getContext('2d');
   }
 
-  let currentCursorMode = 'bw'; // bw, leather, fire, electric, diamond, swatter, fish, watergun
+  let currentCursorMode = ''; // bw, leather, fire, electric, diamond, swatter, fish, watergun
   let equippedPlaygroundCursor = 'bw'; // sidebar selection
   let isMouseInPlaygroundSandbox = false;
   let isMouseInHeroMockup = false;
