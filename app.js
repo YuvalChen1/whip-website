@@ -97,8 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
     fire: createAudioPool('assets/sounds/fire.wav', 4, 0.4),
     electric: createAudioPool('assets/sounds/electric.wav', 4, 0.8),
     watergun: createAudioPool('assets/sounds/watergun.wav', 4, 0.8),
-    swatter: createAudioPool('assets/sounds/swatter.mp3', 4, 0.8),
-    fly: createAudioPool('assets/sounds/fly.mp3', 4, 0.8)
+    swatter: createAudioPool('assets/sounds/swatter.wav', 4, 0.8),
+    fly: createAudioPool('assets/sounds/fly.wav', 4, 0.8)
   };
 
   function unlockAudio() {
