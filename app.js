@@ -124,6 +124,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  window.addEventListener('mousedown', unlockAudio, { once: true });
+  window.addEventListener('touchstart', unlockAudio, { once: true });
+  window.addEventListener('keydown', unlockAudio, { once: true });
+
   const globalSoundToggle = document.getElementById('globalSoundToggle');
 
   function playSound(type) {
