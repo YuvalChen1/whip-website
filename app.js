@@ -747,6 +747,23 @@ document.addEventListener('DOMContentLoaded', () => {
           p2.y += offsetY;
         }
       }
+      
+      // Bending stiffness matching extension
+      const BEND_N = 14;
+      for (let i = 1; i < BEND_N && i < N - 1; i++) {
+        const s = 0.65 * Math.pow(1 - i / BEND_N, 1.2);
+        const a = pts[i - 1], c = pts[i], b = pts[i + 1];
+        const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        c.x += (mx - c.x) * s;
+        c.y += (my - c.y) * s;
+      }
+      for (let i = BEND_N; i < N - 1; i++) {
+        const s = 0.02; 
+        const a = pts[i - 1], c = pts[i], b = pts[i + 1];
+        const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        c.x += (mx - c.x) * s;
+        c.y += (my - c.y) * s;
+      }
     }
 
     // Draw handle & rope
