@@ -113,11 +113,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  window.addEventListener('mousedown', unlockAudio, { once: true });
-  window.addEventListener('keydown', unlockAudio, { once: true });
-  window.addEventListener('mousemove', unlockAudio, { once: true });
-  window.addEventListener('touchstart', unlockAudio, { once: true });
-  window.addEventListener('scroll', unlockAudio, { once: true });
+  const entryOverlay = document.getElementById('entry-overlay');
+  const entryButton = document.getElementById('entry-button');
+
+  if (entryButton) {
+    entryButton.addEventListener('click', () => {
+      unlockAudio();
+      entryOverlay.classList.add('hidden');
+    });
+  }
 
   const globalSoundToggle = document.getElementById('globalSoundToggle');
 

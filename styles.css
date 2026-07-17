@@ -1448,3 +1448,69 @@ button {
   position: absolute;
   left: 6px;
 }
+
+/* Entry Splash Overlay */
+.entry-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(15px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+  color: #fff;
+}
+
+.entry-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.entry-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  animation: fadeUp 1s ease forwards;
+}
+
+.entry-title {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, #fff, #888);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.entry-subtitle {
+  font-size: 1.25rem;
+  color: var(--color-text-dim);
+  max-width: 400px;
+  margin: 0;
+}
+
+.entry-button {
+  margin-top: 16px;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+  animation: pulseButton 2s infinite;
+}
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseButton {
+  0% { box-shadow: 0 0 20px rgba(0, 229, 255, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(0, 229, 255, 0.6); }
+  100% { box-shadow: 0 0 20px rgba(0, 229, 255, 0.3); }
+}
