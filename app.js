@@ -96,8 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
     whip: createAudioPool('assets/sounds/whip.mp3', 6, 0.7),
     fire: createAudioPool('assets/sounds/fire.wav', 4, 0.4),
     electric: createAudioPool('assets/sounds/electric.wav', 4, 0.8),
-    fish: createAudioPool('assets/sounds/fish.wav', 4, 0.8),
-    watergun: createAudioPool('assets/sounds/watergun.wav', 4, 0.8)
+    watergun: createAudioPool('assets/sounds/watergun.wav', 4, 0.8),
+    swatter: createAudioPool('assets/sounds/swatter.mp3', 4, 0.8),
+    fly: createAudioPool('assets/sounds/fly.mp3', 4, 0.8)
   };
 
   function unlockAudio() {
@@ -252,7 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const sections = [
     { selector: '.section-hero', mode: 'bw' },
     { selector: '.section-features', mode: 'fire' },
-    { selector: '.section-swatter', mode: 'swatter' },
     { selector: '.section-premium', mode: 'electric' },
     { selector: '.section-achievements', mode: 'diamond' },
     { selector: '.section-cta', mode: 'watergun' }
@@ -260,13 +260,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateActiveTheme() {
     let activeMode = 'bw';
-    for (const sec of sections) {
-      const el = document.querySelector(sec.selector);
-      if (el) {
-        const r = el.getBoundingClientRect();
-        if (mouse.y >= r.top && mouse.y <= r.bottom) {
-          activeMode = sec.mode;
-          break;
+    
+    if (entryOverlay && !entryOverlay.classList.contains('hidden')) {
+      activeMode = 'swatter';
+    } else {
+      for (const sec of sections) {
+        const el = document.querySelector(sec.selector);
+        if (el) {
+          const r = el.getBoundingClientRect();
+          if (mouse.y >= r.top && mouse.y <= r.bottom) {
+            activeMode = sec.mode;
+            break;
+          }
         }
       }
     }
@@ -1060,10 +1065,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentCursorMode !== 'swatter' || globalFlies.length >= maxGlobalFlies) return;
     const fly = document.createElement('div');
     fly.className = 'sandbox-fly';
-    fly.style.backgroundImage = "url('assets/achievements/first_fly.svg')";
-    fly.onerror = () => {
-      fly.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"6\" fill=\"black\"/></svg>')";
-    };
+    const isRare = Math.random() < 0.1;
+    fly.style.backgroundImage = isRare ? "url('assets/rare_fly.svg')" : "url('assets/fly.svg')";
+    fly.dataset.rare = isRare;
 
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -1127,6 +1131,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function runGlobalSwat(x, y) {
+    playSound('swatter');
     globalGraphic.style.transition = 'transform 0.05s ease-out';
     globalGraphic.style.transform = `translate(-32px, -32px) scale(0.7) rotate(-20deg)`;
     setTimeout(() => {
@@ -1136,6 +1141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const hitSize = 55;
     const surviving = [];
+    let killed = false;
     globalFlies.forEach(fly => {
       const fx = parseFloat(fly.dataset.x);
       const fy = parseFloat(fly.dataset.y);
@@ -1143,10 +1149,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (dist <= hitSize) {
         createGlobalSplat(fx, fy);
         fly.remove();
+        killed = true;
       } else {
         surviving.push(fly);
       }
     });
+    if (killed) playSound('fly');
     globalFlies = surviving;
   }
 
@@ -1155,10 +1163,16 @@ document.addEventListener('DOMContentLoaded', () => {
     splat.className = 'sandbox-fly-splat';
     splat.style.left = `${x}px`;
     splat.style.top = `${y}px`;
+    splat.style.width = '48px';
+    splat.style.height = '48px';
     splat.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 360}deg)`;
-    splat.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M16 4 C 18 10, 24 8, 20 16 C 26 18, 20 24, 16 28 C 12 24, 6 22, 12 16 C 8 8, 14 10, 16 4 Z\" fill=\"%234a5d30\" opacity=\"0.8\"/><circle cx=\"16\" cy=\"16\" r=\"4\" fill=\"%23ff3333\"/></svg>')";
+    splat.style.backgroundImage = "url('assets/splat.svg')";
     document.body.appendChild(splat);
-    setTimeout(() => splat.remove(), 1200);
+    setTimeout(() => {
+      splat.style.transition = 'opacity 1s';
+      splat.style.opacity = '0';
+    }, 1500);
+    setTimeout(() => splat.remove(), 2500);
   }
 
   // --- Main Tick Render Loop ---

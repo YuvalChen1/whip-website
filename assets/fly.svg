@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <g transform="translate(50 50)">
+    <!-- Legs -->
+    <line x1="0" y1="0" x2="-25" y2="-15" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="-25" y2="5" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="-20" y2="25" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+    
+    <line x1="0" y1="0" x2="25" y2="-15" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="25" y2="5" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="20" y2="25" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- Left Wing -->
+    <ellipse cx="-15" cy="-5" rx="20" ry="35" fill="rgba(200, 230, 255, 0.7)" transform="rotate(-30 -15 -5)" />
+    <!-- Right Wing -->
+    <ellipse cx="15" cy="-5" rx="20" ry="35" fill="rgba(200, 230, 255, 0.7)" transform="rotate(30 15 -5)" />
+
+    <!-- Body -->
+    <ellipse cx="0" cy="10" rx="10" ry="25" fill="#222" />
+    
+    <!-- Thorax -->
+    <ellipse cx="0" cy="-5" rx="12" ry="12" fill="#444" />
+    
+    <!-- Eyes -->
+    <ellipse cx="-6" cy="-15" rx="6" ry="8" fill="#dd2222" />
+    <ellipse cx="6" cy="-15" rx="6" ry="8" fill="#dd2222" />
+  </g>
+</svg>
