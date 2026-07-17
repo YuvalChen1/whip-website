@@ -119,7 +119,10 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('touchstart', unlockAudio, { once: true });
   window.addEventListener('scroll', unlockAudio, { once: true });
 
+  const globalSoundToggle = document.getElementById('globalSoundToggle');
+
   function playSound(type) {
+    if (globalSoundToggle && !globalSoundToggle.checked) return;
     if (!audioUnlocked) return;
     const poolObj = audioPools[type];
     if (!poolObj) return;
