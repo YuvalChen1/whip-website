@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const audioPools = {
     whip: createAudioPool('assets/sounds/whip.mp3', 6, 0.7),
-    fire: createAudioPool('assets/sounds/fire.wav', 4, 0.8),
+    fire: createAudioPool('assets/sounds/fire.wav', 4, 0.4),
     electric: createAudioPool('assets/sounds/electric.wav', 4, 0.8),
     fish: createAudioPool('assets/sounds/fish.wav', 4, 0.8),
     watergun: createAudioPool('assets/sounds/watergun.wav', 4, 0.8)
@@ -115,6 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('mousedown', unlockAudio, { once: true });
   window.addEventListener('keydown', unlockAudio, { once: true });
+  window.addEventListener('mousemove', unlockAudio, { once: true });
+  window.addEventListener('touchstart', unlockAudio, { once: true });
+  window.addEventListener('scroll', unlockAudio, { once: true });
 
   function playSound(type) {
     if (!audioUnlocked) return;
@@ -133,13 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Constants matching extension ---
-  const CRACK_SPD = 32;       // Tip speed threshold
+  const CRACK_SPD = 35;       // Tip speed threshold
   const JERK_THRESH = 18;     // Speed threshold for direction reversal flick
   const HANDLE_LEN = 44;      // Rigid handle length
   const N = 12;               // Number of rope segments
   const gravity = 0.15;
   const friction = 0.88;
-  const crackCooldownTime = 400; // 400ms crack cooldown
+  const crackCooldownTime = 1000; // 1-second crack cooldown
   const ropeConfig = { length: 120, width: 2.5 };
 
   // --- Global Custom Cursor ---
@@ -242,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sections = [
     { selector: '.section-hero', mode: 'bw' },
     { selector: '.section-features', mode: 'fire' },
-    { selector: '.section-playground', mode: 'playground' },
+    { selector: '.section-swatter', mode: 'swatter' },
     { selector: '.section-premium', mode: 'electric' },
     { selector: '.section-achievements', mode: 'diamond' },
     { selector: '.section-cta', mode: 'watergun' }
@@ -1037,12 +1040,130 @@ document.addEventListener('DOMContentLoaded', () => {
         globalGraphic.style.transition = 'none';
         updateGraphicScaling();
       }, 100);
+    } else if (currentCursorMode === 'swatter') {
+      runGlobalSwat(e.clientX, e.clientY);
     }
   });
+
+  // --- Fly Swatter Logic ---
+  let globalFlies = [];
+  const maxGlobalFlies = 4;
+
+  function spawnGlobalFly() {
+    if (currentCursorMode !== 'swatter' || globalFlies.length >= maxGlobalFlies) return;
+    const fly = document.createElement('div');
+    fly.className = 'sandbox-fly';
+    fly.style.backgroundImage = "url('assets/achievements/first_fly.svg')";
+    fly.onerror = () => {
+      fly.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"6\" fill=\"black\"/></svg>')";
+    };
+
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const x = Math.random() * (w - 80) + 40;
+    const y = Math.random() * (h - 80) + 40;
+    
+    fly.style.left = `${x}px`;
+    fly.style.top = `${y}px`;
+    fly.dataset.x = x;
+    fly.dataset.y = y;
+    fly.dataset.vx = (Math.random() - 0.5) * 4.5;
+    fly.dataset.vy = (Math.random() - 0.5) * 4.5;
+    
+    document.body.appendChild(fly);
+    globalFlies.push(fly);
+  }
+
+  function updateGlobalFlies() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    globalFlies.forEach(fly => {
+      let fx = parseFloat(fly.dataset.x);
+      let fy = parseFloat(fly.dataset.y);
+      let fvx = parseFloat(fly.dataset.vx);
+      let fvy = parseFloat(fly.dataset.vy);
+      
+      if (Math.random() < 0.05) {
+        fvx += (Math.random() - 0.5) * 2;
+        fvy += (Math.random() - 0.5) * 2;
+      }
+      
+      const speed = Math.sqrt(fvx*fvx + fvy*fvy);
+      if (speed > 5) {
+        fvx = (fvx / speed) * 5;
+        fvy = (fvy / speed) * 5;
+      }
+      fx += fvx;
+      fy += fvy;
+      
+      if (fx < 10 || fx > w - 30) fvx *= -1;
+      if (fy < 10 || fy > h - 30) fvy *= -1;
+      
+      fx = Math.max(10, Math.min(w - 30, fx));
+      fy = Math.max(10, Math.min(h - 30, fy));
+      
+      fly.dataset.x = fx;
+      fly.dataset.y = fy;
+      fly.dataset.vx = fvx;
+      fly.dataset.vy = fvy;
+      
+      const rot = Math.atan2(fvy, fvx) * (180 / Math.PI) + 90;
+      fly.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
+      fly.style.left = `${fx}px`;
+      fly.style.top = `${fy}px`;
+    });
+  }
+
+  function clearGlobalFlies() {
+    globalFlies.forEach(f => f.remove());
+    globalFlies = [];
+  }
+
+  function runGlobalSwat(x, y) {
+    globalGraphic.style.transition = 'transform 0.05s ease-out';
+    globalGraphic.style.transform = `translate(-32px, -32px) scale(0.7) rotate(-20deg)`;
+    setTimeout(() => {
+      globalGraphic.style.transition = 'none';
+      updateGraphicScaling();
+    }, 120);
+
+    const hitSize = 55;
+    const surviving = [];
+    globalFlies.forEach(fly => {
+      const fx = parseFloat(fly.dataset.x);
+      const fy = parseFloat(fly.dataset.y);
+      const dist = Math.sqrt(Math.pow(fx - x, 2) + Math.pow(fy - y, 2));
+      if (dist <= hitSize) {
+        createGlobalSplat(fx, fy);
+        fly.remove();
+      } else {
+        surviving.push(fly);
+      }
+    });
+    globalFlies = surviving;
+  }
+
+  function createGlobalSplat(x, y) {
+    const splat = document.createElement('div');
+    splat.className = 'sandbox-fly-splat';
+    splat.style.left = `${x}px`;
+    splat.style.top = `${y}px`;
+    splat.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 360}deg)`;
+    splat.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M16 4 C 18 10, 24 8, 20 16 C 26 18, 20 24, 16 28 C 12 24, 6 22, 12 16 C 8 8, 14 10, 16 4 Z\" fill=\"%234a5d30\" opacity=\"0.8\"/><circle cx=\"16\" cy=\"16\" r=\"4\" fill=\"%23ff3333\"/></svg>')";
+    document.body.appendChild(splat);
+    setTimeout(() => splat.remove(), 1200);
+  }
 
   // --- Main Tick Render Loop ---
   function tick() {
     updateActiveTheme();
+
+    if (currentCursorMode === 'swatter') {
+      updateGlobalFlies();
+      if (Math.random() < 0.02) spawnGlobalFly();
+    } else {
+      clearGlobalFlies();
+    }
 
     if (isWhipMode(currentCursorMode)) {
       updateGlobalRopePhysics();

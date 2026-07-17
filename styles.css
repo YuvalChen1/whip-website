@@ -228,6 +228,14 @@ button {
   stroke: #ff5500;
 }
 
+/* Swatter Theme */
+.section-swatter {
+  position: relative;
+  background: linear-gradient(180deg, #0a0a0a 0%, #151a15 50%, #0a0a0a 100%);
+  border-top: 1px solid rgba(150, 200, 100, 0.05);
+  border-bottom: 1px solid rgba(150, 200, 100, 0.05);
+}
+
 /* Electric Premium Theme */
 .section-premium {
   position: relative;
@@ -1323,4 +1331,25 @@ button {
 
 .mobile-toggle.active span:nth-child(3) {
   transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Fly Swatter Flies */
+.sandbox-fly {
+  position: fixed;
+  width: 24px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 100;
+  transition: opacity 0.2s;
+}
+.sandbox-fly-splat {
+  position: fixed;
+  width: 32px;
+  height: 32px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 99;
 }
