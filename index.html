@@ -60,7 +60,7 @@
       
       <nav class="nav-links" id="navLinks">
         <a href="#features" class="nav-item">Features</a>
-        <a href="#playground" class="nav-item">Playground</a>
+
         <a href="#premium" class="nav-item">Premium</a>
         <a href="#achievements" class="nav-item">Achievements</a>
       </nav>
@@ -100,8 +100,8 @@
             </svg>
             <span>Add to Chrome — It's Free</span>
           </a>
-          <a href="#playground" class="btn btn-secondary btn-lg">
-            <span>Try the Live Demo</span>
+          <a href="#features" class="btn btn-secondary btn-lg">
+            See Features
           </a>
         </div>
         <div class="hero-stats">
@@ -252,127 +252,6 @@
     </div>
   </section>
 
-  <!-- Interactive Playground Section -->
-  <section id="playground" class="playground-section section-playground">
-    <div class="container">
-      <div class="section-header text-center">
-        <h2 class="section-title">Experience the <span class="gold-text">Physics Sandbox</span></h2>
-        <p class="section-subtitle">
-          Test the physical cursors right here. Hover over the dark grid, select your weapon of choice, and drag your cursor around to test the physical responses and sound effects!
-        </p>
-      </div>
-
-      <div class="playground-container">
-        <!-- Sidebar Controls & Selectors -->
-        <div class="playground-sidebar glass-card">
-          <h3>Equip Cursor</h3>
-          <div class="cursor-selectors">
-            <button class="selector-btn active" data-cursor="bw">
-              <img src="assets/whip_classic.svg" alt="Classic Whip" class="selector-icon">
-              <div class="selector-info">
-                <span class="selector-name">Classic Whip</span>
-                <span class="selector-status">Free</span>
-              </div>
-            </button>
-            <button class="selector-btn" data-cursor="leather">
-              <img src="assets/whip_leather.svg" alt="Leather Whip" class="selector-icon">
-              <div class="selector-info">
-                <span class="selector-name">Leather Whip</span>
-                <span class="selector-status">Free</span>
-              </div>
-            </button>
-            <button class="selector-btn" data-cursor="swatter">
-              <img src="assets/swatter.svg" alt="Fly Swatter" class="selector-icon">
-              <div class="selector-info">
-                <span class="selector-name">Fly Swatter</span>
-                <span class="selector-status">Unlockable</span>
-              </div>
-            </button>
-            <button class="selector-btn" data-cursor="fish">
-              <img src="assets/fish.svg" alt="Fish" class="selector-icon">
-              <div class="selector-info">
-                <span class="selector-name">Wobbly Fish</span>
-                <span class="selector-status">Unlockable</span>
-              </div>
-            </button>
-            <button class="selector-btn premium-btn" data-cursor="watergun">
-              <img src="assets/watergun.svg" alt="Water Gun" class="selector-icon">
-              <div class="selector-info">
-                <span class="selector-name">Water Gun 👑</span>
-                <span class="selector-status">Premium</span>
-              </div>
-            </button>
-          </div>
-
-          <div class="controls-divider"></div>
-
-          <h3>Visual Tuning</h3>
-          <div class="tuning-sliders">
-            <!-- Length -->
-            <div class="slider-group" id="tuning-length-group">
-              <div class="slider-header">
-                <label for="ropeLength">Rope Length</label>
-                <span class="slider-value" id="ropeLengthVal">50</span>
-              </div>
-              <input type="range" id="ropeLength" min="20" max="100" value="50">
-            </div>
-
-            <!-- Thickness -->
-            <div class="slider-group" id="tuning-width-group">
-              <div class="slider-header">
-                <label for="ropeWidth">Rope Thickness</label>
-                <span class="slider-value" id="ropeWidthVal">3.0</span>
-              </div>
-              <input type="range" id="ropeWidth" min="1" max="8" step="0.5" value="3">
-            </div>
-
-            <!-- Size (Fly Swatter / Fish) -->
-            <div class="slider-group" id="tuning-size-group" style="display: none;">
-              <div class="slider-header">
-                <label for="cursorSize">Cursor Scale</label>
-                <span class="slider-value" id="cursorSizeVal">80</span>
-              </div>
-              <input type="range" id="cursorSize" min="40" max="150" value="80">
-            </div>
-
-            <!-- Sound toggle -->
-            <div class="toggle-group">
-              <label for="soundToggle" class="toggle-label">
-                <span>Sound Effects</span>
-                <span class="toggle-sub">Preloaded MP3 File</span>
-              </label>
-              <div class="checkbox-wrapper">
-                <input type="checkbox" id="soundToggle" checked>
-                <span class="checkbox-slider"></span>
-              </div>
-            </div>
-            
-            <button id="resetPlaygroundBtn" class="btn btn-outline btn-block btn-sm">Reset Settings</button>
-          </div>
-        </div>
-
-        <!-- Live Sandbox Grid Area -->
-        <div class="playground-sandbox glass-card" id="sandboxArea">
-          <div class="sandbox-instructions">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-              <path d="M9 11.24V7.5a2.5 2.5 0 0 1 5 0v3.74c1.21-.81 2-2.18 2-3.74C16 4.46 13.54 2 10.5 2S5 4.46 5 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.08-.35-.11-.54-.11H13v-6a1 1 0 0 0-2 0v10.15l-3.48-.73c-.15-.03-.3-.02-.43.03l-1.02.34l4.39 4.39c.29.29.68.43 1.06.43h5.95c.75 0 1.4-.51 1.56-1.25l1.07-5.35c.11-.53-.06-1.07-.46-1.39z"/>
-            </svg>
-            <span>Hover your mouse here to test the cursor!</span>
-            <span class="sandbox-action-hint" id="sandboxActionHint">Flick fast to crack the whip!</span>
-          </div>
-
-          <!-- Sandbox-specific custom physics graphics (drawn only when inside sandbox) -->
-          <div class="physics-cursor-container" id="physicsCursorContainer">
-            <canvas id="whipRopeCanvas" class="whip-canvas"></canvas>
-            <div id="cursorGraphic" class="cursor-graphic"></div>
-          </div>
-          
-          <!-- Watergun splash container -->
-          <div class="water-droplets" id="waterDroplets"></div>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- Premium Section -->
   <section id="premium" class="premium-section section-premium">
@@ -486,7 +365,7 @@
         <div class="link-group">
           <h4>Navigate</h4>
           <a href="#features">Features</a>
-          <a href="#playground">Playground</a>
+
           <a href="#premium">Premium</a>
           <a href="#achievements">Achievements</a>
         </div>

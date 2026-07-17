@@ -78,137 +78,58 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- Preloaded Whip Sound Pool ---
-  const audioPool = [];
-  const poolSize = 6;
-  let poolIndex = 0;
-  const soundToggle = document.getElementById('soundToggle');
-
-  function preloadWhipSound() {
-    if (audioPool.length > 0) return;
-    try {
-      for (let i = 0; i < poolSize; i++) {
-        const audio = new Audio('assets/sounds/whip.mp3');
-        audio.preload = 'auto';
-        audio.volume = 0.7;
-        audioPool.push(audio);
-      }
-    } catch (e) {
-      console.warn("Failed to initialize audio pool:", e);
+  // --- Audio System ---
+  let audioUnlocked = false;
+  
+  function createAudioPool(src, size, volume = 1.0) {
+    const pool = [];
+    for (let i = 0; i < size; i++) {
+      const a = new Audio(src);
+      a.volume = volume;
+      a.preload = 'auto';
+      pool.push(a);
     }
+    return { pool, index: 0 };
   }
 
-  preloadWhipSound();
+  const audioPools = {
+    whip: createAudioPool('assets/sounds/whip.mp3', 6, 0.7),
+    fire: createAudioPool('assets/sounds/fire.wav', 4, 0.8),
+    electric: createAudioPool('assets/sounds/electric.wav', 4, 0.8),
+    fish: createAudioPool('assets/sounds/fish.wav', 4, 0.8),
+    watergun: createAudioPool('assets/sounds/watergun.wav', 4, 0.8)
+  };
 
-  // Fallback synthesizer in case Audio element fails
-  let synthAudioCtx = null;
-  function playSynthWhip() {
-    try {
-      if (!synthAudioCtx) {
-        synthAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (synthAudioCtx.state === 'suspended') {
-        synthAudioCtx.resume();
-      }
-      const t = synthAudioCtx.currentTime;
-      const osc = synthAudioCtx.createOscillator();
-      const oscGain = synthAudioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(150, t);
-      osc.frequency.exponentialRampToValueAtTime(20, t + 0.08);
-      oscGain.gain.setValueAtTime(0.5, t);
-      oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
-      osc.connect(oscGain);
-      oscGain.connect(synthAudioCtx.destination);
-      osc.start(t);
-      osc.stop(t + 0.08);
-    } catch (e) {}
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
+    Object.values(audioPools).forEach(poolObj => {
+      poolObj.pool.forEach(a => {
+        a.play().then(() => {
+          a.pause();
+          a.currentTime = 0;
+        }).catch(() => {});
+      });
+    });
+  }
+
+  window.addEventListener('mousedown', unlockAudio, { once: true });
+  window.addEventListener('keydown', unlockAudio, { once: true });
+
+  function playSound(type) {
+    if (!audioUnlocked) return;
+    const poolObj = audioPools[type];
+    if (!poolObj) return;
+    const a = poolObj.pool[poolObj.index];
+    a.currentTime = 0;
+    a.play().catch(() => {});
+    poolObj.index = (poolObj.index + 1) % poolObj.pool.length;
   }
 
   function playWhipCrack() {
-    if (soundToggle && !soundToggle.checked) return;
-    try {
-      if (audioPool.length > 0) {
-        const audio = audioPool[poolIndex];
-        audio.currentTime = 0;
-        audio.play().catch(() => {
-          playSynthWhip();
-        });
-        poolIndex = (poolIndex + 1) % poolSize;
-      } else {
-        playSynthWhip();
-      }
-    } catch (e) {
-      playSynthWhip();
-    }
-  }
-
-  // Synthesized action sounds
-  let actionAudioCtx = null;
-  function initActionAudio() {
-    if (!actionAudioCtx) {
-      actionAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-  }
-
-  function playSynthSplat() {
-    if (soundToggle && !soundToggle.checked) return;
-    try {
-      initActionAudio();
-      if (actionAudioCtx.state === 'suspended') actionAudioCtx.resume();
-      const t = actionAudioCtx.currentTime;
-      const osc = actionAudioCtx.createOscillator();
-      const gain = actionAudioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(280, t);
-      osc.frequency.linearRampToValueAtTime(80, t + 0.12);
-      gain.gain.setValueAtTime(0.3, t);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
-      osc.connect(gain);
-      gain.connect(actionAudioCtx.destination);
-      osc.start(t);
-      osc.stop(t + 0.12);
-    } catch (e) {}
-  }
-
-  function playSynthWater() {
-    if (soundToggle && !soundToggle.checked) return;
-    try {
-      initActionAudio();
-      if (actionAudioCtx.state === 'suspended') actionAudioCtx.resume();
-      const t = actionAudioCtx.currentTime;
-      const osc = actionAudioCtx.createOscillator();
-      const gain = actionAudioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(450, t);
-      osc.frequency.exponentialRampToValueAtTime(60, t + 0.15);
-      gain.gain.setValueAtTime(0.2, t);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-      osc.connect(gain);
-      gain.connect(actionAudioCtx.destination);
-      osc.start(t);
-      osc.stop(t + 0.15);
-    } catch (e) {}
-  }
-
-  function playSynthFish() {
-    if (soundToggle && !soundToggle.checked) return;
-    try {
-      initActionAudio();
-      if (actionAudioCtx.state === 'suspended') actionAudioCtx.resume();
-      const t = actionAudioCtx.currentTime;
-      const osc = actionAudioCtx.createOscillator();
-      const gain = actionAudioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(140, t);
-      osc.frequency.linearRampToValueAtTime(90, t + 0.08);
-      gain.gain.setValueAtTime(0.15, t);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
-      osc.connect(gain);
-      gain.connect(actionAudioCtx.destination);
-      osc.start(t);
-      osc.stop(t + 0.08);
-    } catch (e) {}
+    playSound('whip');
+    if (currentCursorMode === 'fire') playSound('fire');
+    if (currentCursorMode === 'electric') playSound('electric');
   }
 
   // --- Constants matching extension ---
@@ -218,8 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const N = 12;               // Number of rope segments
   const gravity = 0.15;
   const friction = 0.88;
-  const crackCooldownTime = 1000; // 1-second crack cooldown (locks excessive sounds)
-  const ropeConfig = { length: 50, width: 2.5 };
+  const crackCooldownTime = 400; // 400ms crack cooldown
+  const ropeConfig = { length: 120, width: 2.5 };
 
   // --- Global Custom Cursor ---
   const globalCursor = document.getElementById('global-cursor');
@@ -1044,486 +965,90 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- Local Sandbox specific handlers ---
-  const sandbox = document.getElementById('sandboxArea');
-  const sandboxSidebar = document.querySelector('.playground-sidebar');
-  const sandboxCanvas = document.getElementById('whipRopeCanvas');
-  const sandboxCursorGraphic = document.getElementById('cursorGraphic');
-  let sandboxCtx = null;
+  // --- Global Interaction Effects ---
+  window.addEventListener('mousedown', (e) => {
+    if (currentCursorMode === 'watergun') {
+      playSound('watergun');
+      const clickX = e.clientX;
+      const clickY = e.clientY;
+      globalGraphic.style.transition = 'transform 0.05s ease-out';
+      globalGraphic.style.transform = `translate(-32px, -16px) translateY(8px) scale(0.92)`;
+      setTimeout(() => {
+        globalGraphic.style.transition = 'none';
+        updateGraphicScaling();
+      }, 120);
 
-  if (sandboxCanvas) {
-    sandboxCtx = sandboxCanvas.getContext('2d');
-  }
-
-  // Local sandbox sizing state variables
-  let localPts = [];
-  let localPrv = [];
-  const localNumPoints = 12;
-  let localConfig = { length: 50, width: 3.0, size: 80 };
-  let localTilt = 0;
-  let localLastCrackTime = 0;
-
-  function resizeSandboxCanvas() {
-    if (sandboxCanvas && sandbox) {
-      const r = sandbox.getBoundingClientRect();
-      sandboxCanvas.width = r.width;
-      sandboxCanvas.height = r.height;
-    }
-  }
-  window.addEventListener('resize', resizeSandboxCanvas);
-
-  if (sandbox) {
-    sandbox.addEventListener('mouseenter', () => {
-      isMouseInPlaygroundSandbox = true;
-      document.querySelector('.sandbox-instructions').classList.add('hidden');
-      resizeSandboxCanvas();
-      
-      // Hide global custom cursor layers
-      globalCanvas.style.display = 'none';
-      globalGraphic.style.display = 'none';
-      
-      updateSandboxCursorStyles();
-      initLocalRope();
-
-      if (equippedPlaygroundCursor === 'swatter') {
-        spawnSandboxFly();
-        spawnSandboxFly();
-      }
-    });
-
-    sandbox.addEventListener('mouseleave', () => {
-      isMouseInPlaygroundSandbox = false;
-      document.querySelector('.sandbox-instructions').classList.remove('hidden');
-      
-      setCursorMode('bw');
-      updateActiveTheme();
-      clearSandboxFlies();
-      
-      if (globalCanvas) globalCanvas.style.display = 'block';
-    });
-
-    sandbox.addEventListener('mousedown', (e) => {
-      if (!isMouseInPlaygroundSandbox) return;
-      const rect = sandbox.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const clickY = e.clientY - rect.top;
-      
-      if (equippedPlaygroundCursor === 'swatter') {
-        runSandboxSwat(clickX, clickY);
-      } else if (equippedPlaygroundCursor === 'watergun') {
-        runSandboxWaterBlast(clickX, clickY);
-      }
-    });
-  }
-
-  const selectors = document.querySelectorAll('.selector-btn');
-  selectors.forEach(sel => {
-    sel.addEventListener('click', () => {
-      selectors.forEach(s => s.classList.remove('active'));
-      sel.classList.add('active');
-      
-      equippedPlaygroundCursor = sel.getAttribute('data-cursor');
-      const parent = sel.closest('.playground-container');
-      if (sel.classList.contains('premium-btn')) {
-        parent.classList.add('premium-theme');
-      } else {
-        parent.classList.remove('premium-theme');
-      }
-      
-      updateSandboxCursorStyles();
-      initLocalRope();
-    });
-  });
-
-  const sliderLength = document.getElementById('ropeLength');
-  const sliderWidth = document.getElementById('ropeWidth');
-  const sliderSize = document.getElementById('cursorSize');
-  const valLength = document.getElementById('ropeLengthVal');
-  const valWidth = document.getElementById('ropeWidthVal');
-  const valSize = document.getElementById('cursorSizeVal');
-  const resetBtn = document.getElementById('resetPlaygroundBtn');
-
-  if (sliderLength) {
-    sliderLength.addEventListener('input', () => {
-      localConfig.length = parseInt(sliderLength.value);
-      valLength.textContent = localConfig.length;
-      initLocalRope();
-    });
-  }
-  if (sliderWidth) {
-    sliderWidth.addEventListener('input', () => {
-      localConfig.width = parseFloat(sliderWidth.value);
-      valWidth.textContent = localConfig.width.toFixed(1);
-    });
-  }
-  if (sliderSize) {
-    sliderSize.addEventListener('input', () => {
-      localConfig.size = parseInt(sliderSize.value);
-      valSize.textContent = localConfig.size;
-      updateLocalGraphicDimensions();
-    });
-  }
-
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      localConfig.length = 50;
-      localConfig.width = 3.0;
-      localConfig.size = 80;
-      if (sliderLength) { sliderLength.value = 50; valLength.textContent = '50'; }
-      if (sliderWidth) { sliderWidth.value = 3; valWidth.textContent = '3.0'; }
-      if (sliderSize) { sliderSize.value = 80; valSize.textContent = '80'; }
-      initLocalRope();
-      updateLocalGraphicDimensions();
-    });
-  }
-
-  function initLocalRope() {
-    localPts = [];
-    localPrv = [];
-    const rect = sandbox.getBoundingClientRect();
-    const rx = mouse.x - rect.left;
-    const ry = mouse.y - rect.top;
-    
-    for (let i = 0; i < localNumPoints; i++) {
-      const p = { x: rx, y: ry };
-      localPts.push(p);
-      localPrv.push({ ...p });
-    }
-  }
-
-  function updateLocalGraphicDimensions() {
-    if (sandboxCursorGraphic) {
-      sandboxCursorGraphic.style.width = `${localConfig.size}px`;
-      sandboxCursorGraphic.style.height = `${localConfig.size}px`;
-      if (equippedPlaygroundCursor === 'swatter') {
-        sandboxCursorGraphic.style.transform = `translate(-${localConfig.size / 2}px, -${localConfig.size / 2}px)`;
-      } else if (equippedPlaygroundCursor === 'fish') {
-        sandboxCursorGraphic.style.transform = `translate(-${localConfig.size / 2}px, -${localConfig.size / 2}px)`;
-      } else if (equippedPlaygroundCursor === 'watergun') {
-        sandboxCursorGraphic.style.transform = `translate(-${localConfig.size / 2}px, -${localConfig.size / 4}px)`;
-      }
-    }
-  }
-
-  function updateSandboxCursorStyles() {
-    const lenGroup = document.getElementById('tuning-length-group');
-    const widthGroup = document.getElementById('tuning-width-group');
-    const sizeGroup = document.getElementById('tuning-size-group');
-    const actionHint = document.getElementById('sandboxActionHint');
-
-    if (equippedPlaygroundCursor === 'bw' || equippedPlaygroundCursor === 'leather') {
-      lenGroup.style.display = 'flex';
-      widthGroup.style.display = 'flex';
-      sizeGroup.style.display = 'none';
-      sandboxCanvas.style.display = 'block';
-      sandboxCursorGraphic.style.display = 'none';
-      actionHint.textContent = 'Flick fast to crack the whip!';
-    } else {
-      lenGroup.style.display = 'none';
-      widthGroup.style.display = 'none';
-      sizeGroup.style.display = 'flex';
-      sandboxCanvas.style.display = 'none';
-      sandboxCursorGraphic.style.display = 'block';
-      
-      if (equippedPlaygroundCursor === 'swatter') {
-        sandboxCursorGraphic.style.backgroundImage = "url('assets/swatter.svg')";
-        actionHint.textContent = 'Click to swat flies in the sandbox!';
-      } else if (equippedPlaygroundCursor === 'fish') {
-        sandboxCursorGraphic.style.backgroundImage = "url('assets/fish.svg')";
-        actionHint.textContent = 'Move mouse to watch the fish wobble!';
-      } else if (equippedPlaygroundCursor === 'watergun') {
-        sandboxCursorGraphic.style.backgroundImage = "url('assets/watergun.svg')";
-        actionHint.textContent = 'Click to shoot water blaster!';
-      }
-      updateLocalGraphicDimensions();
-    }
-  }
-
-  // Local sandbox flies
-  let sandboxFlies = [];
-  const maxSandboxFlies = 4;
-
-  function spawnSandboxFly() {
-    if (!isMouseInPlaygroundSandbox || equippedPlaygroundCursor !== 'swatter' || sandboxFlies.length >= maxSandboxFlies) return;
-    const fly = document.createElement('div');
-    fly.className = 'sandbox-fly';
-    fly.style.backgroundImage = "url('assets/achievements/first_fly.svg')";
-    fly.onerror = () => {
-      fly.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"6\" fill=\"black\"/></svg>')";
-    };
-
-    const rect = sandbox.getBoundingClientRect();
-    const x = Math.random() * (rect.width - 40) + 20;
-    const y = Math.random() * (rect.height - 40) + 20;
-    
-    fly.style.left = `${x}px`;
-    fly.style.top = `${y}px`;
-    fly.dataset.x = x;
-    fly.dataset.y = y;
-    fly.dataset.vx = (Math.random() - 0.5) * 4.5;
-    fly.dataset.vy = (Math.random() - 0.5) * 4.5;
-    
-    sandbox.appendChild(fly);
-    sandboxFlies.push(fly);
-  }
-
-  function updateSandboxFlies() {
-    const rect = sandbox.getBoundingClientRect();
-    sandboxFlies.forEach(fly => {
-      let fx = parseFloat(fly.dataset.x);
-      let fy = parseFloat(fly.dataset.y);
-      let fvx = parseFloat(fly.dataset.vx);
-      let fvy = parseFloat(fly.dataset.vy);
-      
-      if (Math.random() < 0.05) {
-        fvx += (Math.random() - 0.5) * 2;
-        fvy += (Math.random() - 0.5) * 2;
-      }
-      
-      const speed = Math.sqrt(fvx*fvx + fvy*fvy);
-      if (speed > 5) {
-        fvx = (fvx / speed) * 5;
-        fvy = (fvy / speed) * 5;
-      }
-      fx += fvx;
-      fy += fvy;
-      
-      if (fx < 10 || fx > rect.width - 30) fvx *= -1;
-      if (fy < 10 || fy > rect.height - 30) fvy *= -1;
-      
-      fx = Math.max(10, Math.min(rect.width - 30, fx));
-      fy = Math.max(10, Math.min(rect.height - 30, fy));
-      
-      fly.dataset.x = fx;
-      fly.dataset.y = fy;
-      fly.dataset.vx = fvx;
-      fly.dataset.vy = fvy;
-      
-      const rot = Math.atan2(fvy, fvx) * (180 / Math.PI) + 90;
-      fly.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
-      fly.style.left = `${fx}px`;
-      fly.style.top = `${fy}px`;
-    });
-  }
-
-  function clearSandboxFlies() {
-    sandboxFlies.forEach(f => f.remove());
-    sandboxFlies = [];
-  }
-
-  function runSandboxSwat(x, y) {
-    playSynthSplat();
-    sandboxCursorGraphic.style.transition = 'transform 0.05s ease-out';
-    sandboxCursorGraphic.style.transform = `translate(-${localConfig.size / 2}px, -${localConfig.size / 2}px) scale(0.7) rotate(-20deg)`;
-    setTimeout(() => {
-      sandboxCursorGraphic.style.transition = 'none';
-      updateLocalGraphicDimensions();
-    }, 120);
-
-    const hitSize = 35 + (localConfig.size / 4);
-    const surviving = [];
-    sandboxFlies.forEach(fly => {
-      const fx = parseFloat(fly.dataset.x);
-      const fy = parseFloat(fly.dataset.y);
-      const dist = Math.sqrt(Math.pow(fx - x, 2) + Math.pow(fy - y, 2));
-      if (dist <= hitSize) {
-        createSandboxSplat(fx, fy);
-        fly.remove();
-      } else {
-        surviving.push(fly);
-      }
-    });
-    sandboxFlies = surviving;
-  }
-
-  function createSandboxSplat(x, y) {
-    const splat = document.createElement('div');
-    splat.className = 'sandbox-fly-splat';
-    splat.style.left = `${x}px`;
-    splat.style.top = `${y}px`;
-    splat.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 360}deg)`;
-    splat.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M16 4 C 18 10, 24 8, 20 16 C 26 18, 20 24, 16 28 C 12 24, 6 22, 12 16 C 8 8, 14 10, 16 4 Z\" fill=\"%234a5d30\" opacity=\"0.8\"/><circle cx=\"16\" cy=\"16\" r=\"4\" fill=\"%23ff3333\"/></svg>')";
-    sandbox.appendChild(splat);
-    setTimeout(() => splat.remove(), 1200);
-  }
-
-  function runSandboxWaterBlast(x, y) {
-    playSynthWater();
-    sandboxCursorGraphic.style.transition = 'transform 0.05s ease-out';
-    sandboxCursorGraphic.style.transform = `translate(-${localConfig.size / 2}px, -${localConfig.size / 4}px) translateY(8px) scale(0.92)`;
-    setTimeout(() => {
-      sandboxCursorGraphic.style.transition = 'none';
-      updateLocalGraphicDimensions();
-    }, 120);
-
-    const waterContainer = document.getElementById('waterDroplets');
-    for (let i = 0; i < 5; i++) {
-      const drop = document.createElement('div');
-      drop.className = 'water-droplet';
-      drop.style.left = `${x + sandbox.getBoundingClientRect().left}px`;
-      drop.style.top = `${y + sandbox.getBoundingClientRect().top - 15}px`;
-      
-      const angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.4;
-      const speed = 6 + Math.random() * 6;
-      drop.dataset.vx = Math.cos(angle) * speed;
-      drop.dataset.vy = Math.sin(angle) * speed;
-      drop.dataset.x = x + sandbox.getBoundingClientRect().left;
-      drop.dataset.y = y + sandbox.getBoundingClientRect().top - 15;
-      
-      document.body.appendChild(drop);
-      animateWaterDrop(drop);
-    }
-  }
-
-  let localFishAngle = 0;
-  let localFishWobble = 0;
-  function updateLocalFishRotation(vx, vy) {
-    const speed = Math.sqrt(vx*vx + vy*vy);
-    if (speed > 1.2) {
-      const targetAngle = Math.atan2(vy, vx) * (180 / Math.PI);
-      let diff = targetAngle - localFishAngle;
-      while (diff < -180) diff += 360;
-      while (diff > 180) diff -= 360;
-      localFishAngle += diff * 0.15;
-      if (speed > 7 && Math.random() < 0.15) {
-        playSynthFish();
-      }
-    }
-    if (speed > 0.5) {
-      localFishWobble += speed * 0.08;
-    } else {
-      localFishWobble += 0.04;
-    }
-    const wiggle = Math.sin(localFishWobble) * 12;
-    sandboxCursorGraphic.style.transform = `translate(-50%, -50%) rotate(${localFishAngle + wiggle}deg)`;
-  }
-
-  function getLocalHandle(x, y, vx) {
-    localTilt += (vx * 0.01 - localTilt) * 0.08;
-    const clampedTilt = Math.max(-0.35, Math.min(0.35, localTilt));
-    const ang = Math.PI / 2 + clampedTilt;
-    const dirX = Math.cos(ang);
-    const dirY = Math.sin(ang);
-    const perpX = -dirY;
-    const perpY = dirX;
-    const topX = x;
-    const topY = y;
-    const botX = x + dirX * HANDLE_LEN;
-    const botY = y + dirY * HANDLE_LEN;
-    return { topX, topY, botX, botY, ang, perpX, perpY, dirX, dirY };
-  }
-
-  // Local sandbox solver loop
-  function updateSandboxRopePhysics(sandboxX, sandboxY, vx) {
-    if (localPts.length === 0 || !sandboxCtx) return;
-    
-    // Clear canvas
-    sandboxCtx.clearRect(0, 0, sandboxCanvas.width, sandboxCanvas.height);
-
-    const h = getLocalHandle(sandboxX, sandboxY, vx);
-    localPts[0].x = h.topX;
-    localPts[0].y = h.topY;
-    localPrv[0].x = h.topX - vx * 0.1;
-    localPrv[0].y = h.topY;
-
-    for (let i = 1; i < localNumPoints; i++) {
-      const p = localPts[i];
-      const pvx = (p.x - localPrv[i].x) * friction;
-      const pvy = (p.y - localPrv[i].y) * friction + gravity;
-      localPrv[i].x = p.x;
-      localPrv[i].y = p.y;
-      p.x += pvx;
-      p.y += pvy;
-    }
-
-    const segmentLength = localConfig.length / (localNumPoints - 1);
-    for (let loop = 0; loop < 5; loop++) {
-      for (let i = 1; i < localNumPoints; i++) {
-        const p1 = localPts[i - 1];
-        const p2 = localPts[i];
+      for (let i = 0; i < 5; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'water-droplet';
+        drop.style.left = `${clickX}px`;
+        drop.style.top = `${clickY - 15}px`;
         
-        const dx = p2.x - p1.x;
-        const dy = p2.y - p1.y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist === 0) continue;
+        const angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.4;
+        const speed = 6 + Math.random() * 6;
+        drop.dataset.vx = Math.cos(angle) * speed;
+        drop.dataset.vy = Math.sin(angle) * speed;
+        drop.dataset.x = clickX;
+        drop.dataset.y = clickY - 15;
         
-        const diff = segmentLength - dist;
-        const percent = (diff / dist) * 0.5;
-        const offsetX = dx * percent;
-        const offsetY = dy * percent;
+        document.body.appendChild(drop);
+        animateWaterDrop(drop);
+      }
+    } else if (currentCursorMode === 'fish') {
+      playSound('fish');
+      const clickX = e.clientX;
+      const clickY = e.clientY;
+      
+      // Bubble particle effect
+      for(let i=0; i<3; i++) {
+        const bubble = document.createElement('div');
+        bubble.style.position = 'fixed';
+        bubble.style.width = `${4 + Math.random() * 6}px`;
+        bubble.style.height = bubble.style.width;
+        bubble.style.border = '1px solid rgba(255,255,255,0.6)';
+        bubble.style.borderRadius = '50%';
+        bubble.style.left = `${clickX + (Math.random()-0.5)*10}px`;
+        bubble.style.top = `${clickY}px`;
+        bubble.style.pointerEvents = 'none';
+        bubble.style.zIndex = '9999';
+        document.body.appendChild(bubble);
         
-        if (i === 1) {
-          p2.x += offsetX * 2;
-          p2.y += offsetY * 2;
-        } else {
-          p1.x -= offsetX;
-          p1.y -= offsetY;
-          p2.x += offsetX;
-          p2.y += offsetY;
+        let by = clickY;
+        let bx = clickX;
+        function floatBubble() {
+          by -= 1.5;
+          bx += Math.sin(by * 0.1) * 1.5;
+          bubble.style.top = `${by}px`;
+          bubble.style.left = `${bx}px`;
+          bubble.style.opacity = (by / clickY).toString();
+          if (by > 0 && document.body.contains(bubble)) {
+            requestAnimationFrame(floatBubble);
+          } else {
+            if (document.body.contains(bubble)) bubble.remove();
+          }
         }
+        requestAnimationFrame(floatBubble);
       }
-    }
-
-    drawCanvasHandle(sandboxCtx, h, equippedPlaygroundCursor);
-    drawCanvasRope(sandboxCtx, localPts, equippedPlaygroundCursor, localConfig.width);
-
-    // Sandbox crack check (1 second cooldown)
-    const tip = localPts[localNumPoints - 1];
-    const tdx = tip.x - localPrv[localNumPoints - 1].x;
-    const tdy = tip.y - localPrv[localNumPoints - 1].y;
-    const tipSpeed = Math.sqrt(tdx*tdx + tdy*tdy);
-    const now = Date.now();
-
-    if (tipSpeed > CRACK_SPD && now - localLastCrackTime > crackCooldownTime) {
-      playWhipCrack();
-      localLastCrackTime = now;
       
-      const splat = document.createElement('div');
-      splat.className = 'splat-effect active';
-      splat.style.left = `${tip.x}px`;
-      splat.style.top = `${tip.y}px`;
-      sandbox.appendChild(splat);
-      setTimeout(() => splat.remove(), 400);
+      // Scale/wobble the fish to simulate bite
+      globalGraphic.style.transition = 'transform 0.05s ease-out';
+      globalGraphic.style.transform = `translate(-32px, -32px) scale(1.3) rotate(${fishAngle - 20}deg)`;
+      setTimeout(() => {
+        globalGraphic.style.transition = 'none';
+        updateGraphicScaling();
+      }, 100);
     }
-  }
+  });
 
   // --- Main Tick Render Loop ---
   function tick() {
     updateActiveTheme();
 
-    if (isMouseInPlaygroundSandbox) {
-      const rect = sandbox.getBoundingClientRect();
-      const rx = mouse.x - rect.left;
-      const ry = mouse.y - rect.top;
-      const vx = mouse.x - lastMouse.x;
-      
-      if (equippedPlaygroundCursor === 'bw' || equippedPlaygroundCursor === 'leather') {
-        updateSandboxRopePhysics(rx, ry, vx);
-      } else {
-        sandboxCursorGraphic.style.left = `${rx}px`;
-        sandboxCursorGraphic.style.top = `${ry}px`;
-        
-        if (equippedPlaygroundCursor === 'fish') {
-          const dy = ry - parseFloat(sandboxCursorGraphic.dataset.lastY || ry);
-          updateLocalFishRotation(vx, dy);
-        }
-        sandboxCursorGraphic.dataset.lastX = rx;
-        sandboxCursorGraphic.dataset.lastY = ry;
-      }
-      
-      if (equippedPlaygroundCursor === 'swatter') {
-        updateSandboxFlies();
-        if (Math.random() < 0.015) {
-          spawnSandboxFly();
-        }
-      }
+    if (isWhipMode(currentCursorMode)) {
+      updateGlobalRopePhysics();
     } else {
-      if (isWhipMode(currentCursorMode)) {
-        updateGlobalRopePhysics();
-      } else {
-        if (globalCtx) {
-          globalCtx.clearRect(0, 0, globalCanvas.width, globalCanvas.height);
-        }
+      if (globalCtx) {
+        globalCtx.clearRect(0, 0, globalCanvas.width, globalCanvas.height);
       }
     }
 
