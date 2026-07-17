@@ -150,12 +150,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Constants matching extension ---
   const CRACK_SPD = 35;       // Tip speed threshold
   const JERK_THRESH = 18;     // Speed threshold for direction reversal flick
-  const HANDLE_LEN = 44;      // Rigid handle length
-  const N = 12;               // Number of rope segments
-  const gravity = 0.15;
-  const friction = 0.88;
+  const HANDLE_LEN = 40;      // Rigid handle length
+  const N = 50;               // Number of rope segments
+  const gravity = 0.38;
+  const friction = 0.984;
   const crackCooldownTime = 1000; // 1-second crack cooldown
   const ropeConfig = { length: 120, width: 2.5 };
+
+  const STOCK_N = 4;
+  const SEG = 9;
+  let restLengths = [];
+  function updateRestLengths() {
+    restLengths = [];
+    for (let i = 0; i < N - 1; i++) {
+      if (i < STOCK_N) restLengths.push(SEG * 1.3);
+      else restLengths.push(SEG * (0.6 + (i / N) * 0.5));
+    }
+  }
+  updateRestLengths();
 
   // --- Global Custom Cursor ---
   const globalCursor = document.getElementById('global-cursor');
@@ -720,31 +732,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Solve Constraints
-    const segmentLength = ropeConfig.length / (N - 1);
-    for (let loop = 0; loop < 5; loop++) {
-      for (let i = 1; i < N; i++) {
-        const p1 = pts[i - 1];
-        const p2 = pts[i];
+    for (let loop = 0; loop < 12; loop++) {
+      for (let i = 0; i < N - 1; i++) {
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
         
         const dx = p2.x - p1.x;
         const dy = p2.y - p1.y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
+        const dist = Math.sqrt(dx*dx + dy*dy) || 0.001;
+        const rest = restLengths[i] || SEG;
         
-        if (dist === 0) continue;
-        
-        const diff = segmentLength - dist;
-        const percent = (diff / dist) * 0.5;
-        const offsetX = dx * percent;
-        const offsetY = dy * percent;
-        
-        if (i === 1) {
-          p2.x += offsetX * 2;
-          p2.y += offsetY * 2;
+        const diff = (dist - rest) / dist;
+        if (i === 0) {
+          p2.x -= dx * diff;
+          p2.y -= dy * diff;
         } else {
-          p1.x -= offsetX;
-          p1.y -= offsetY;
-          p2.x += offsetX;
-          p2.y += offsetY;
+          p1.x += dx * diff * 0.5;
+          p1.y += dy * diff * 0.5;
+          p2.x -= dx * diff * 0.5;
+          p2.y -= dy * diff * 0.5;
         }
       }
       
