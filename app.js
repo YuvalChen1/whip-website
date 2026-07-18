@@ -303,28 +303,42 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const sections = [
-    { selector: '.section-hero', mode: 'bw' },
-    { selector: '.section-features', mode: 'fire' },
-    { selector: '.section-premium', mode: 'electric' },
-    { selector: '.section-achievements', mode: 'diamond' },
-    { selector: '.section-cta', mode: 'watergun' },
+    { selector: '.hero', mode: 'swatter' },
+    { selector: '.section-playground', mode: 'playground' },
+    { selector: '.section-how-it-works', mode: 'bw' },
+    { selector: '.section-premium', mode: 'diamond' },
     { selector: '.section-footer', mode: 'leather' }
   ];
 
+  let cachedSections = [];
+
+  function cacheSections() {
+    cachedSections = sections.map(sec => {
+      const el = document.querySelector(sec.selector);
+      if (el) {
+        const r = el.getBoundingClientRect();
+        return { mode: sec.mode, top: r.top + window.scrollY, bottom: r.bottom + window.scrollY };
+      }
+      return null;
+    }).filter(Boolean);
+  }
+
+  // Ensure sections are cached
+  window.addEventListener('resize', cacheSections);
+  window.addEventListener('scroll', cacheSections, { passive: true });
+  setTimeout(cacheSections, 100);
+
   function updateActiveTheme() {
     let activeMode = 'bw';
+    const pageY = mouse.y + window.scrollY;
     
     if (entryOverlay && !entryOverlay.classList.contains('hidden')) {
       activeMode = 'swatter';
     } else {
-      for (const sec of sections) {
-        const el = document.querySelector(sec.selector);
-        if (el) {
-          const r = el.getBoundingClientRect();
-          if (mouse.y >= r.top && mouse.y <= r.bottom) {
-            activeMode = sec.mode;
-            break;
-          }
+      for (const sec of cachedSections) {
+        if (pageY >= sec.top && pageY <= sec.bottom) {
+          activeMode = sec.mode;
+          break;
         }
       }
     }
@@ -1297,21 +1311,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Main Tick Render Loop ---
   let lastTickTime = performance.now();
-  let lastThemeUpdate = 0;
   function tick(time) {
     if (!time) time = performance.now();
     const dt = time - lastTickTime;
     lastTickTime = time;
     const timeScale = Math.min(dt / (1000 / 60), 3) || 1;
 
-    if (time - lastThemeUpdate > 100) {
-      updateActiveTheme();
-      lastThemeUpdate = time;
-    }
+    updateActiveTheme();
 
     if (currentCursorMode === 'swatter') {
       updateGlobalFlies(timeScale);
-      if (Math.random() < 0.02 * timeScale) spawnGlobalFly();
+      if (Math.random() < 0.005 * timeScale) spawnGlobalFly();
     } else {
       clearGlobalFlies();
     }
