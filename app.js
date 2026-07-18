@@ -217,6 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
       prv.push({ ...p });
     }
     prevTip = { x: pts[N-1].x, y: pts[N-1].y };
+    lastCrackTime = Date.now(); // Prevent false crack on init
   }
 
   function resizeGlobalCanvas() {
