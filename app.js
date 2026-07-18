@@ -1282,17 +1282,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Main Tick Render Loop ---
   let lastTickTime = performance.now();
+  let lastThemeUpdate = 0;
   function tick(time) {
     if (!time) time = performance.now();
     const dt = time - lastTickTime;
     lastTickTime = time;
     const timeScale = Math.min(dt / (1000 / 60), 3) || 1;
 
-    updateActiveTheme();
+    if (time - lastThemeUpdate > 100) {
+      updateActiveTheme();
+      lastThemeUpdate = time;
+    }
 
     if (currentCursorMode === 'swatter') {
       updateGlobalFlies(timeScale);
-      if (Math.random() < 0.05 * timeScale) spawnGlobalFly();
+      if (Math.random() < 0.02 * timeScale) spawnGlobalFly();
     } else {
       clearGlobalFlies();
     }
