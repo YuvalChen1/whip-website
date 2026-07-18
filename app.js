@@ -164,11 +164,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const SEG = 9;
   const ARCH_BLEND = 0.45;
   let restLengths = [];
+  const BEND_N = 14;
+  let bendStiffness = [];
+  let stockWeights = [];
+
   function updateRestLengths() {
     restLengths = [];
+    bendStiffness = [];
+    stockWeights = [];
+
     for (let i = 0; i < N - 1; i++) {
       if (i < STOCK_N) restLengths.push(SEG * 1.3);
       else restLengths.push(SEG * (0.6 + (i / N) * 0.5));
+    }
+
+    // Precalculate heavy math for physics loop
+    for (let i = 1; i < BEND_N; i++) {
+      bendStiffness[i] = 0.65 * Math.pow(1 - i / BEND_N, 1.2);
+    }
+
+    for (let i = 1; i <= STOCK_N; i++) {
+      const dist = i * (SEG * 1.3);
+      const upScale = 1.6;
+      const outwardScale = 3.0 * Math.pow(i / STOCK_N, 2.5);
+      const t = 1 - (i / (STOCK_N + 1));
+      const stiffness = ARCH_BLEND * (t * t);
+      stockWeights[i] = { dist, upScale, outwardScale, stiffness };
     }
   }
   updateRestLengths();
@@ -747,6 +768,35 @@ document.addEventListener('DOMContentLoaded', () => {
       p.y += vy + GRAV;
     }
 
+    // --- Pre-Iteration Calculations (Once per frame) ---
+    // Dynamic loop direction: flips after 3 full spins
+    const speed = Math.sqrt(sVel.x ** 2 + sVel.y ** 2);
+    if (speed > 2) {
+      const velAng = Math.atan2(sVel.y, sVel.x);
+      if (prevVelAng !== null) {
+        let angleDiff = velAng - prevVelAng;
+        if (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+        if (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+        spinAngleAccumulator += angleDiff;
+        if (Math.abs(spinAngleAccumulator) >= Math.PI * 6) {
+          targetLoopSide = targetLoopSide === -1 ? 1 : -1;
+          spinAngleAccumulator = 0;
+        }
+      }
+      prevVelAng = velAng;
+    } else {
+      prevVelAng = null;
+      spinAngleAccumulator *= 0.95;
+    }
+
+    // Smoothly transition to target loop side (compensating for moving out of 12x loop)
+    currentLoopOut += (targetLoopSide - currentLoopOut) * 0.4;
+
+    const upX = -h.dirX;
+    const upY = -h.dirY;
+    const outX = -h.perpX * currentLoopOut;
+    const outY = -h.perpY * currentLoopOut;
+
     // Distance constraints + bending + stock curve (all inside ITERS loop)
     for (let iter = 0; iter < ITERS; iter++) {
       // Distance constraints
@@ -757,7 +807,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const rest = restLengths[i] || SEG;
         const diff = (dist - rest) / dist;
         if (i === 0) {
-          // Only move b; anchor is locked
           b.x -= dx * diff;
           b.y -= dy * diff;
         } else {
@@ -772,15 +821,15 @@ document.addEventListener('DOMContentLoaded', () => {
       pts[0].x = h.topX;
       pts[0].y = h.topY;
 
-      // Bending stiffness on stock and transition
-      const BEND_N = 14;
+      // Bending stiffness using precalculated array
       for (let i = 1; i < BEND_N && i < N - 1; i++) {
-        const s = 0.65 * Math.pow(1 - i / BEND_N, 1.2);
+        const s = bendStiffness[i];
         const a = pts[i - 1], c = pts[i], b = pts[i + 1];
         const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
         c.x += (mx - c.x) * s;
         c.y += (my - c.y) * s;
       }
+      
       // Light global bending for the rest
       for (let i = BEND_N; i < N - 1; i++) {
         const s = 0.02;
@@ -790,48 +839,14 @@ document.addEventListener('DOMContentLoaded', () => {
         c.y += (my - c.y) * s;
       }
 
-      // Tangent connection to handle (Natural Stock Curve)
-      // Dynamic loop direction: flips after 3 full spins
-      const speed = Math.sqrt(sVel.x ** 2 + sVel.y ** 2);
-      if (speed > 2) {
-        const velAng = Math.atan2(sVel.y, sVel.x);
-        if (prevVelAng !== null) {
-          let angleDiff = velAng - prevVelAng;
-          if (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-          if (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-          spinAngleAccumulator += angleDiff;
-          if (Math.abs(spinAngleAccumulator) >= Math.PI * 6) {
-            targetLoopSide = targetLoopSide === -1 ? 1 : -1;
-            spinAngleAccumulator = 0;
-          }
-        }
-        prevVelAng = velAng;
-      } else {
-        prevVelAng = null;
-        spinAngleAccumulator *= 0.95;
-      }
-
-      // Smoothly transition to target loop side
-      currentLoopOut += (targetLoopSide - currentLoopOut) * 0.1;
-
       // Stock projects UP out of the handle, biased outward
-      const upX = -h.dirX;
-      const upY = -h.dirY;
-      const outX = -h.perpX * currentLoopOut;
-      const outY = -h.perpY * currentLoopOut;
-
       for (let i = 1; i <= STOCK_N; i++) {
-        const dist = i * (SEG * 1.3);
-        const upScale = 1.6;
-        const outwardScale = 3.0 * Math.pow(i / STOCK_N, 2.5);
-        const idealX = h.topX + upX * (dist * upScale) + outX * (dist * outwardScale);
-        const idealY = h.topY + upY * (dist * upScale) + outY * (dist * outwardScale);
+        const sw = stockWeights[i];
+        const idealX = h.topX + upX * (sw.dist * sw.upScale) + outX * (sw.dist * sw.outwardScale);
+        const idealY = h.topY + upY * (sw.dist * sw.upScale) + outY * (sw.dist * sw.outwardScale);
 
-        const t = 1 - (i / (STOCK_N + 1));
-        const stiffness = ARCH_BLEND * (t * t);
-
-        pts[i].x += (idealX - pts[i].x) * stiffness;
-        pts[i].y += (idealY - pts[i].y) * stiffness;
+        pts[i].x += (idealX - pts[i].x) * sw.stiffness;
+        pts[i].y += (idealY - pts[i].y) * sw.stiffness;
       }
 
       // Wall collisions
@@ -1166,7 +1181,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let globalFlies = [];
 
   function spawnGlobalFly() {
-    if (globalFlies.length >= 25) return; // Cap flies to prevent lag
+    if (globalFlies.length >= 10) return; // Cap flies to prevent lag
     const isRare = Math.random() > 0.8;
     const fly = document.createElement('div');
     fly.className = 'sandbox-fly';
