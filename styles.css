@@ -113,7 +113,7 @@ button {
   background-repeat: no-repeat;
   display: none;
   transform: translate(-16px, -48px); /* Handle offset */
-  transition: width 0.12s, height 0.12s, transform 0.12s, background-color 0.12s, border-radius 0.12s;
+  transition: width 0.12s, height 0.12s, background-color 0.12s, border-radius 0.12s;
 }
 
 /* Morph dot when hovering interactive items */

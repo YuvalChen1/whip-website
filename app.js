@@ -222,22 +222,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Track global mouse
   window.addEventListener('mousemove', (e) => {
-    if (globalCursor.style.opacity === '0' || globalCursor.style.opacity === '') {
-      globalCursor.style.opacity = '1';
-    }
-    
     mouse.x = e.clientX;
     mouse.y = e.clientY;
 
     sVel.x = mouse.x - lastMouse.x;
     sVel.y = mouse.y - lastMouse.y;
 
+    globalGraphic.style.left = `${mouse.x}px`;
+    globalGraphic.style.top = `${mouse.y}px`;
+
     if (!isWhipMode(currentCursorMode)) {
-      globalGraphic.style.left = `${mouse.x}px`;
-      globalGraphic.style.top = `${mouse.y}px`;
       if (currentCursorMode === 'fish') {
         updateFishRotation(sVel.x, sVel.y);
       }
+    }
+
+    // Add velocity to head of rope if in whip mode
+    if (isWhipMode(currentCursorMode) && pts.length > 0) {
+      pts[0].x += sVel.x;
+      pts[0].y += sVel.y;
     }
 
     // Interactive morph checks
@@ -719,6 +722,13 @@ document.addEventListener('DOMContentLoaded', () => {
     prv[0].x = h.topX - sVel.x * 0.1;
     prv[0].y = h.topY - sVel.y * 0.1;
 
+    // Add velocity interpolation like the extension for smoother responsiveness
+    for (let i = 1; i < N; i++) {
+      const t = i / (N - 1);
+      pts[i].x += sVel.x * 0.5 * Math.sin(t * Math.PI) + (Math.random() - 0.5) * 3;
+      pts[i].y += sVel.y * 0.5 * Math.sin(t * Math.PI) + (Math.random() - 0.5) * 3;
+    }
+
     // Physics Verlet Integration
     for (let i = 1; i < N; i++) {
       const p = pts[i];
@@ -790,9 +800,6 @@ document.addEventListener('DOMContentLoaded', () => {
       playWhipCrack();
       lastCrackTime = now;
       
-      // Flash splat
-      spawnSplatOverlay(tip.x, tip.y);
-      
       // Mockup target whacking
       if (isMouseInHeroMockup && mockupMode === 'fun') {
         checkMockupBubbleCollision(tip.x, tip.y);
@@ -806,7 +813,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dot < 0 && curSpd > JERK_THRESH && prvSpd > JERK_THRESH && now - lastCrackTime > crackCooldownTime) {
       playWhipCrack();
       lastCrackTime = now;
-      spawnSplatOverlay(tip.x, tip.y);
       if (isMouseInHeroMockup && mockupMode === 'fun') {
         checkMockupBubbleCollision(tip.x, tip.y);
       }
@@ -950,17 +956,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 800);
   }
 
-  function spawnSplatOverlay(x, y) {
-    const splat = document.createElement('div');
-    splat.className = 'splat-effect active';
-    splat.style.left = `${x}px`;
-    splat.style.top = `${y}px`;
-    splat.style.position = 'fixed';
-    splat.style.pointerEvents = 'none';
-    splat.style.zIndex = '10000';
-    document.body.appendChild(splat);
-    setTimeout(() => splat.remove(), 400);
-  }
 
   function animateWaterDrop(drop) {
     let x = parseFloat(drop.dataset.x);
@@ -1112,7 +1107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     globalFlies.push(fly);
   }
 
-  function updateGlobalFlies() {
+  function updateGlobalFlies(timeScale = 1) {
     const w = window.innerWidth;
     const h = window.innerHeight;
     globalFlies.forEach(fly => {
@@ -1121,18 +1116,18 @@ document.addEventListener('DOMContentLoaded', () => {
       let fvx = parseFloat(fly.dataset.vx);
       let fvy = parseFloat(fly.dataset.vy);
       
-      if (Math.random() < 0.05) {
+      if (Math.random() < 0.05 * timeScale) {
         fvx += (Math.random() - 0.5) * 2;
         fvy += (Math.random() - 0.5) * 2;
       }
       
-      const speed = Math.sqrt(fvx*fvx + fvy*fvy);
-      if (speed > 5) {
-        fvx = (fvx / speed) * 5;
-        fvy = (fvy / speed) * 5;
+      const flySpeed = Math.sqrt(fvx*fvx + fvy*fvy);
+      if (flySpeed > 5) {
+        fvx = (fvx / flySpeed) * 5;
+        fvy = (fvy / flySpeed) * 5;
       }
-      fx += fvx;
-      fy += fvy;
+      fx += fvx * timeScale;
+      fy += fvy * timeScale;
       
       if (fx < 10 || fx > w - 30) fvx *= -1;
       if (fy < 10 || fy > h - 30) fvy *= -1;
@@ -1203,12 +1198,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Main Tick Render Loop ---
-  function tick() {
+  let lastTickTime = performance.now();
+  function tick(time) {
+    if (!time) time = performance.now();
+    const dt = time - lastTickTime;
+    lastTickTime = time;
+    const timeScale = Math.min(dt / (1000 / 60), 3) || 1;
+
     updateActiveTheme();
 
     if (currentCursorMode === 'swatter') {
-      updateGlobalFlies();
-      if (Math.random() < 0.02) spawnGlobalFly();
+      updateGlobalFlies(timeScale);
+      if (Math.random() < 0.02 * timeScale) spawnGlobalFly();
     } else {
       clearGlobalFlies();
     }
