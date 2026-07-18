@@ -148,17 +148,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Constants matching extension ---
-  const CRACK_SPD = 35;       // Tip speed threshold
+  const CRACK_SPD = 32;       // Tip speed threshold (extension: 32)
   const JERK_THRESH = 18;     // Speed threshold for direction reversal flick
   const HANDLE_LEN = 40;      // Rigid handle length
   const N = 50;               // Number of rope segments
-  const gravity = 0.38;
-  const friction = 0.984;
+  const GRAV = 0.38;
+  const DAMP = 0.984;
+  const ITERS = 12;
   const crackCooldownTime = 1000; // 1-second crack cooldown
   const ropeConfig = { length: 120, width: 2.5 };
 
   const STOCK_N = 4;
   const SEG = 9;
+  const ARCH_BLEND = 0.45;
   let restLengths = [];
   function updateRestLengths() {
     restLengths = [];
@@ -186,10 +188,16 @@ document.addEventListener('DOMContentLoaded', () => {
   
   let mouse = { x: 0, y: 0 };
   let lastMouse = { x: 0, y: 0 };
-  let sVel = { x: 0, y: 0 }; // cursor velocity vector
+  let mVel = { x: 0, y: 0 };
+  let sVel = { x: 0, y: 0 }; // smoothed cursor velocity (exponential)
   let prevSVel = { x: 0, y: 0 };
   let lastCrackTime = 0;
   let hTilt = 0; // handle tilt angle accumulator
+  let currentLoopOut = -1;     // visual float between -1 and 1
+  let targetLoopSide = -1;     // locked target side
+  let spinAngleAccumulator = 0;
+  let prevVelAng = null;
+  let prevTip = { x: 0, y: 0 };
 
   // Particles arrays
   let fireParticles = [];
@@ -201,14 +209,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let prv = [];
 
   function initGlobalRope() {
-    pts = [];
-    prv = [];
+    pts = []; prv = [];
     const h = getHandle(mouse.x, mouse.y);
     for (let i = 0; i < N; i++) {
-      const p = { x: h.topX, y: h.topY + i * 5 };
+      const p = { x: h.topX, y: h.topY + i * SEG };
       pts.push(p);
       prv.push({ ...p });
     }
+    prevTip = { x: pts[N-1].x, y: pts[N-1].y };
   }
 
   function resizeGlobalCanvas() {
@@ -229,8 +237,11 @@ document.addEventListener('DOMContentLoaded', () => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
 
-    sVel.x = mouse.x - lastMouse.x;
-    sVel.y = mouse.y - lastMouse.y;
+    // Smoothed velocity (exact extension logic)
+    mVel.x = mouse.x - lastMouse.x;
+    mVel.y = mouse.y - lastMouse.y;
+    sVel.x = sVel.x * 0.7 + mVel.x * 0.3;
+    sVel.y = sVel.y * 0.7 + mVel.y * 0.3;
 
     globalGraphic.style.left = `${mouse.x}px`;
     globalGraphic.style.top = `${mouse.y}px`;
@@ -239,12 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentCursorMode === 'fish') {
         updateFishRotation(sVel.x, sVel.y);
       }
-    }
-
-    // Add velocity to head of rope if in whip mode
-    if (isWhipMode(currentCursorMode) && pts.length > 0) {
-      pts[0].x += sVel.x;
-      pts[0].y += sVel.y;
     }
 
     // Interactive morph checks
@@ -712,7 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- Global Verlet Solver ---
+  // --- Global Verlet Solver (exact match to extension content.js simulate()) ---
   function updateGlobalRopePhysics() {
     if (pts.length === 0 || !globalCtx) return;
     
@@ -721,54 +726,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Get Handle
     const h = getHandle(mouse.x, mouse.y);
+
+    // Hard-lock anchor to handle top (cursor)
     pts[0].x = h.topX;
     pts[0].y = h.topY;
     prv[0].x = h.topX - sVel.x * 0.1;
     prv[0].y = h.topY - sVel.y * 0.1;
 
-    // Add velocity interpolation like the extension for smoother responsiveness
+    // Verlet integration
     for (let i = 1; i < N; i++) {
-      const t = i / (N - 1);
-      pts[i].x += sVel.x * 0.5 * Math.sin(t * Math.PI) + (Math.random() - 0.5) * 3;
-      pts[i].y += sVel.y * 0.5 * Math.sin(t * Math.PI) + (Math.random() - 0.5) * 3;
-    }
-
-    // Physics Verlet Integration
-    for (let i = 1; i < N; i++) {
-      const p = pts[i];
-      const vx = (p.x - prv[i].x) * friction;
-      const vy = (p.y - prv[i].y) * friction + gravity;
-      
-      prv[i].x = p.x;
-      prv[i].y = p.y;
+      const p = pts[i], pp = prv[i];
+      const vx = (p.x - pp.x) * DAMP;
+      const vy = (p.y - pp.y) * DAMP;
+      prv[i] = { x: p.x, y: p.y };
       p.x += vx;
-      p.y += vy;
+      p.y += vy + GRAV;
     }
 
-    // Solve Constraints
-    for (let loop = 0; loop < 12; loop++) {
+    // Distance constraints + bending + stock curve (all inside ITERS loop)
+    for (let iter = 0; iter < ITERS; iter++) {
+      // Distance constraints
       for (let i = 0; i < N - 1; i++) {
-        const p1 = pts[i];
-        const p2 = pts[i + 1];
-        
-        const dx = p2.x - p1.x;
-        const dy = p2.y - p1.y;
-        const dist = Math.sqrt(dx*dx + dy*dy) || 0.001;
+        const a = pts[i], b = pts[i + 1];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
         const rest = restLengths[i] || SEG;
-        
         const diff = (dist - rest) / dist;
         if (i === 0) {
-          p2.x -= dx * diff;
-          p2.y -= dy * diff;
+          // Only move b; anchor is locked
+          b.x -= dx * diff;
+          b.y -= dy * diff;
         } else {
-          p1.x += dx * diff * 0.5;
-          p1.y += dy * diff * 0.5;
-          p2.x -= dx * diff * 0.5;
-          p2.y -= dy * diff * 0.5;
+          a.x += dx * diff * 0.5;
+          a.y += dy * diff * 0.5;
+          b.x -= dx * diff * 0.5;
+          b.y -= dy * diff * 0.5;
         }
       }
-      
-      // Bending stiffness matching extension
+
+      // Re-lock anchor after constraints
+      pts[0].x = h.topX;
+      pts[0].y = h.topY;
+
+      // Bending stiffness on stock and transition
       const BEND_N = 14;
       for (let i = 1; i < BEND_N && i < N - 1; i++) {
         const s = 0.65 * Math.pow(1 - i / BEND_N, 1.2);
@@ -777,12 +777,76 @@ document.addEventListener('DOMContentLoaded', () => {
         c.x += (mx - c.x) * s;
         c.y += (my - c.y) * s;
       }
+      // Light global bending for the rest
       for (let i = BEND_N; i < N - 1; i++) {
-        const s = 0.02; 
+        const s = 0.02;
         const a = pts[i - 1], c = pts[i], b = pts[i + 1];
         const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
         c.x += (mx - c.x) * s;
         c.y += (my - c.y) * s;
+      }
+
+      // Tangent connection to handle (Natural Stock Curve)
+      // Dynamic loop direction: flips after 3 full spins
+      const speed = Math.sqrt(sVel.x ** 2 + sVel.y ** 2);
+      if (speed > 2) {
+        const velAng = Math.atan2(sVel.y, sVel.x);
+        if (prevVelAng !== null) {
+          let angleDiff = velAng - prevVelAng;
+          if (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+          if (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+          spinAngleAccumulator += angleDiff;
+          if (Math.abs(spinAngleAccumulator) >= Math.PI * 6) {
+            targetLoopSide = targetLoopSide === -1 ? 1 : -1;
+            spinAngleAccumulator = 0;
+          }
+        }
+        prevVelAng = velAng;
+      } else {
+        prevVelAng = null;
+        spinAngleAccumulator *= 0.95;
+      }
+
+      // Smoothly transition to target loop side
+      currentLoopOut += (targetLoopSide - currentLoopOut) * 0.1;
+
+      // Stock projects UP out of the handle, biased outward
+      const upX = -h.dirX;
+      const upY = -h.dirY;
+      const outX = -h.perpX * currentLoopOut;
+      const outY = -h.perpY * currentLoopOut;
+
+      for (let i = 1; i <= STOCK_N; i++) {
+        const dist = i * (SEG * 1.3);
+        const upScale = 1.6;
+        const outwardScale = 3.0 * Math.pow(i / STOCK_N, 2.5);
+        const idealX = h.topX + upX * (dist * upScale) + outX * (dist * outwardScale);
+        const idealY = h.topY + upY * (dist * upScale) + outY * (dist * outwardScale);
+
+        const t = 1 - (i / (STOCK_N + 1));
+        const stiffness = ARCH_BLEND * (t * t);
+
+        pts[i].x += (idealX - pts[i].x) * stiffness;
+        pts[i].y += (idealY - pts[i].y) * stiffness;
+      }
+
+      // Wall collisions
+      for (let i = 1; i < N; i++) {
+        const p = pts[i];
+        let vx = p.x - prv[i].x, vy = p.y - prv[i].y, hit = false;
+
+        if (p.x < 0) {
+          p.x = 0; if (vx < 0) vx = -vx * 0.42; vy *= 0.86; hit = true;
+          targetLoopSide = 1; spinAngleAccumulator = 0;
+        } else if (p.x > globalCanvas.width) {
+          p.x = globalCanvas.width; if (vx > 0) vx = -vx * 0.42; vy *= 0.86; hit = true;
+          targetLoopSide = -1; spinAngleAccumulator = 0;
+        }
+
+        if (p.y < 0) { p.y = 0; if (vy < 0) vy = -vy * 0.42; vx *= 0.86; hit = true; }
+        else if (p.y > globalCanvas.height) { p.y = globalCanvas.height; if (vy > 0) vy = -vy * 0.42; vx *= 0.86; hit = true; }
+
+        if (hit) { prv[i].x = p.x - vx; prv[i].y = p.y - vy; }
       }
     }
 
@@ -793,36 +857,47 @@ document.addEventListener('DOMContentLoaded', () => {
     // Draw particles
     updateAndDrawParticles(globalCtx, pts, currentCursorMode);
 
-    // Crack check (1-second cooldown avoids repetitive cracks on single sweep)
+    // Crack detection
     const tip = pts[N - 1];
-    const tdx = tip.x - prv[N - 1].x;
-    const tdy = tip.y - prv[N - 1].y;
-    const tipSpeed = Math.sqrt(tdx*tdx + tdy*tdy);
+    const tdx = tip.x - prevTip.x;
+    const tdy = tip.y - prevTip.y;
+    const tipSpeed = Math.sqrt(tdx * tdx + tdy * tdy);
     const now = Date.now();
+    const canCrack = now - lastCrackTime > crackCooldownTime;
 
-    if (tipSpeed > CRACK_SPD && now - lastCrackTime > crackCooldownTime) {
-      playWhipCrack();
-      lastCrackTime = now;
-      
-      // Mockup target whacking
-      if (isMouseInHeroMockup && mockupMode === 'fun') {
-        checkMockupBubbleCollision(tip.x, tip.y);
-      }
+    // Speed-based crack
+    if (tipSpeed > CRACK_SPD && canCrack) {
+      triggerCrack(tip.x, tip.y);
     }
 
-    // Direction reversal jerk crack
+    // Direction reversal crack (flick)
     const dot = sVel.x * prevSVel.x + sVel.y * prevSVel.y;
     const curSpd = Math.sqrt(sVel.x ** 2 + sVel.y ** 2);
     const prvSpd = Math.sqrt(prevSVel.x ** 2 + prevSVel.y ** 2);
-    if (dot < 0 && curSpd > JERK_THRESH && prvSpd > JERK_THRESH && now - lastCrackTime > crackCooldownTime) {
-      playWhipCrack();
-      lastCrackTime = now;
-      if (isMouseInHeroMockup && mockupMode === 'fun') {
-        checkMockupBubbleCollision(tip.x, tip.y);
-      }
+    if (dot < 0 && curSpd > JERK_THRESH && prvSpd > JERK_THRESH && canCrack) {
+      triggerCrack(tip.x, tip.y);
     }
 
     prevSVel = { ...sVel };
+    prevTip = { x: tip.x, y: tip.y };
+  }
+
+  // Trigger crack: sound + velocity impulse (runs ONCE per crack, not every frame)
+  function triggerCrack(x, y) {
+    playWhipCrack();
+    lastCrackTime = Date.now();
+
+    // Velocity impulse on rope points (exact extension logic)
+    for (let i = 1; i < N; i++) {
+      const t = i / (N - 1);
+      pts[i].x += sVel.x * 0.5 * Math.sin(t * Math.PI) + (Math.random() - 0.5) * 3;
+      pts[i].y += sVel.y * 0.5 * Math.sin(t * Math.PI) + (Math.random() - 0.5) * 3;
+    }
+
+    // Mockup target whacking
+    if (isMouseInHeroMockup && mockupMode === 'fun') {
+      checkMockupBubbleCollision(x, y);
+    }
   }
 
   // --- Interactive ChatGPT Simulator ---
