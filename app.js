@@ -96,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     whip: createAudioPool('assets/sounds/whip.mp3', 6, 0.7),
     fire: createAudioPool('assets/sounds/fire.wav', 4, 0.4),
     electric: createAudioPool('assets/sounds/electric.wav', 4, 0.8),
+    diamond: createAudioPool('assets/sounds/diamond.wav', 4, 0.8),
     watergun: createAudioPool('assets/sounds/watergun.wav', 4, 0.8),
     swatter: createAudioPool('assets/sounds/swatter.wav', 4, 0.8),
     fly: createAudioPool('assets/sounds/fly.wav', 4, 0.8)
@@ -145,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     playSound('whip');
     if (currentCursorMode === 'fire') playSound('fire');
     if (currentCursorMode === 'electric') playSound('electric');
+    if (currentCursorMode === 'diamond') playSound('diamond');
   }
 
   // --- Constants matching extension ---
@@ -1162,15 +1164,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Fly Swatter Logic ---
   let globalFlies = [];
-  const maxGlobalFlies = 4;
 
   function spawnGlobalFly() {
-    if (currentCursorMode !== 'swatter' || globalFlies.length >= maxGlobalFlies) return;
+    if (globalFlies.length >= 25) return; // Cap flies to prevent lag
+    const isRare = Math.random() > 0.8;
     const fly = document.createElement('div');
     fly.className = 'sandbox-fly';
-    const isRare = Math.random() < 0.1;
+    if (isRare) fly.classList.add('rare');
     fly.style.backgroundImage = isRare ? "url('assets/rare_fly.svg')" : "url('assets/fly.svg')";
-    fly.dataset.rare = isRare;
 
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -1179,23 +1180,26 @@ document.addEventListener('DOMContentLoaded', () => {
     
     fly.style.left = `${x}px`;
     fly.style.top = `${y}px`;
-    fly.dataset.x = x;
-    fly.dataset.y = y;
-    fly.dataset.vx = (Math.random() - 0.5) * 4.5;
-    fly.dataset.vy = (Math.random() - 0.5) * 4.5;
     
     document.body.appendChild(fly);
-    globalFlies.push(fly);
+    globalFlies.push({
+      el: fly,
+      x: x,
+      y: y,
+      vx: (Math.random() - 0.5) * 4.5,
+      vy: (Math.random() - 0.5) * 4.5,
+      isRare: isRare
+    });
   }
 
   function updateGlobalFlies(timeScale = 1) {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    globalFlies.forEach(fly => {
-      let fx = parseFloat(fly.dataset.x);
-      let fy = parseFloat(fly.dataset.y);
-      let fvx = parseFloat(fly.dataset.vx);
-      let fvy = parseFloat(fly.dataset.vy);
+    globalFlies.forEach(flyObj => {
+      let fx = flyObj.x;
+      let fy = flyObj.y;
+      let fvx = flyObj.vx;
+      let fvy = flyObj.vy;
       
       if (Math.random() < 0.05 * timeScale) {
         fvx += (Math.random() - 0.5) * 2;
@@ -1216,20 +1220,20 @@ document.addEventListener('DOMContentLoaded', () => {
       fx = Math.max(10, Math.min(w - 30, fx));
       fy = Math.max(10, Math.min(h - 30, fy));
       
-      fly.dataset.x = fx;
-      fly.dataset.y = fy;
-      fly.dataset.vx = fvx;
-      fly.dataset.vy = fvy;
+      flyObj.x = fx;
+      flyObj.y = fy;
+      flyObj.vx = fvx;
+      flyObj.vy = fvy;
       
       const rot = Math.atan2(fvy, fvx) * (180 / Math.PI) + 90;
-      fly.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
-      fly.style.left = `${fx}px`;
-      fly.style.top = `${fy}px`;
+      flyObj.el.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
+      flyObj.el.style.left = `${fx}px`;
+      flyObj.el.style.top = `${fy}px`;
     });
   }
 
   function clearGlobalFlies() {
-    globalFlies.forEach(f => f.remove());
+    globalFlies.forEach(f => f.el.remove());
     globalFlies = [];
   }
 
@@ -1245,16 +1249,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const hitSize = 55;
     const surviving = [];
     let killed = false;
-    globalFlies.forEach(fly => {
-      const fx = parseFloat(fly.dataset.x);
-      const fy = parseFloat(fly.dataset.y);
-      const dist = Math.sqrt(Math.pow(fx - x, 2) + Math.pow(fy - y, 2));
+    globalFlies.forEach(flyObj => {
+      const dist = Math.sqrt(Math.pow(flyObj.x - x, 2) + Math.pow(flyObj.y - y, 2));
       if (dist <= hitSize) {
-        createGlobalSplat(fx, fy);
-        fly.remove();
+        createGlobalSplat(flyObj.x, flyObj.y);
+        flyObj.el.remove();
         killed = true;
       } else {
-        surviving.push(fly);
+        surviving.push(flyObj);
       }
     });
     if (killed) playSound('fly');
