@@ -148,6 +148,17 @@ button {
   transform: translate(-50%, -50%);
 }
 
+.water-droplet {
+  position: fixed;
+  pointer-events: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0, 229, 255, 0.8);
+  box-shadow: 0 0 6px rgba(0, 229, 255, 0.6);
+  z-index: 9998;
+}
+
 .particle-fire {
   background: radial-gradient(circle, #ff8c00 0%, #e63900 80%, transparent 100%);
   box-shadow: 0 0 6px #e63900;

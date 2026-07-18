@@ -284,7 +284,8 @@ document.addEventListener('DOMContentLoaded', () => {
     { selector: '.section-features', mode: 'fire' },
     { selector: '.section-premium', mode: 'electric' },
     { selector: '.section-achievements', mode: 'diamond' },
-    { selector: '.section-cta', mode: 'watergun' }
+    { selector: '.section-cta', mode: 'watergun' },
+    { selector: '.section-footer', mode: 'leather' }
   ];
 
   function updateActiveTheme() {
