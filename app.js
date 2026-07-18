@@ -222,6 +222,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Track global mouse
   window.addEventListener('mousemove', (e) => {
+    if (globalCursor.style.opacity === '0' || globalCursor.style.opacity === '') {
+      globalCursor.style.opacity = '1';
+    }
+
     mouse.x = e.clientX;
     mouse.y = e.clientY;
 
@@ -1209,7 +1213,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (currentCursorMode === 'swatter') {
       updateGlobalFlies(timeScale);
-      if (Math.random() < 0.02 * timeScale) spawnGlobalFly();
+      if (Math.random() < 0.05 * timeScale) spawnGlobalFly();
     } else {
       clearGlobalFlies();
     }
