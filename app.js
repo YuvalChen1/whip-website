@@ -370,18 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
       prevTip = { x: pts[N-1].x, y: pts[N-1].y };
     }
 
-    // Trigger tap interaction for non-whip cursors
-    if (currentCursorMode === 'swatter') {
-      runGlobalSwat(mouse.x, mouse.y);
-    } else if (currentCursorMode === 'watergun' || currentCursorMode === 'fish') {
-      // Simulate mousedown
-      const event = new MouseEvent('mousedown', {
-        clientX: mouse.x,
-        clientY: mouse.y,
-        bubbles: true
-      });
-      window.dispatchEvent(event);
-    }
+    // Removed synthetic tap trigger - handled by pointerdown natively
 
     updateTouchPosition(e);
   }, { passive: true });
@@ -406,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const sections = [
-    { selector: '.section-hero', mode: 'swatter' },
+    { selector: '.section-hero', mode: 'bw' },
     { selector: '.section-features', mode: 'fire' },
     { selector: '.section-premium', mode: 'diamond' },
     { selector: '.section-achievements', mode: 'fish' },
@@ -1219,7 +1208,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Global Interaction Effects ---
-  window.addEventListener('mousedown', (e) => {
+  window.addEventListener('pointerdown', (e) => {
     if (currentCursorMode === 'watergun') {
       playSound('watergun');
       const clickX = e.clientX;
