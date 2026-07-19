@@ -368,6 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         prv[i].x = h.topX; prv[i].y = h.topY + i * SEG;
       }
       prevTip = { x: pts[N-1].x, y: pts[N-1].y };
+      lastCrackTime = Date.now(); // Prevent crack sound when equipping via tap
     }
 
     // Removed synthetic tap trigger - handled by pointerdown natively
