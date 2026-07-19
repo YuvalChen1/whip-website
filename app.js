@@ -78,10 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- Audio System (Web Audio API) ---
+  // --- Audio System (Hybrid API) ---
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   const audioCtx = new AudioContext();
   let audioUnlocked = false;
+  let useFallback = false;
 
   const audioBuffers = {};
   
@@ -95,10 +96,33 @@ document.addEventListener('DOMContentLoaded', () => {
     fly: { url: 'assets/sounds/fly.wav', vol: 0.8 }
   };
 
+  function createAudioPool(src, size, volume) {
+    const pool = [];
+    for (let i = 0; i < size; i++) {
+      const a = new Audio(src);
+      a.volume = volume;
+      a.preload = 'auto';
+      pool.push(a);
+    }
+    return { pool, index: 0 };
+  }
+
+  const fallbackAudioPools = {
+    whip: createAudioPool('assets/sounds/whip.mp3', 6, 0.7),
+    fire: createAudioPool('assets/sounds/fire.wav', 4, 0.4),
+    electric: createAudioPool('assets/sounds/electric.wav', 4, 0.8),
+    diamond: createAudioPool('assets/sounds/diamond.wav', 4, 0.8),
+    watergun: createAudioPool('assets/sounds/watergun.wav', 4, 0.8),
+    swatter: createAudioPool('assets/sounds/swatter.wav', 4, 0.8),
+    fly: createAudioPool('assets/sounds/fly.wav', 4, 0.8)
+  };
+
   async function loadAudio() {
+    let fetchFailed = false;
     for (const [key, config] of Object.entries(audioSources)) {
       try {
         const response = await fetch(config.url);
+        if (!response.ok) throw new Error('Fetch failed');
         const arrayBuffer = await response.arrayBuffer();
         
         // Safari compatibility for decodeAudioData
@@ -115,15 +139,30 @@ document.addEventListener('DOMContentLoaded', () => {
         
         audioBuffers[key] = { buffer: audioBuffer, vol: config.vol };
       } catch (e) {
-        console.error(`Failed to load audio: ${key}`, e);
+        console.warn(`Local file environment detected or fetch blocked. Switching to HTML5 Audio fallback for: ${key}`);
+        fetchFailed = true;
       }
     }
+    if (fetchFailed) useFallback = true;
   }
   loadAudio();
 
   function unlockAudio() {
     audioUnlocked = true;
-    if (audioCtx.state === 'suspended') {
+    if (useFallback) {
+      Object.values(fallbackAudioPools).forEach(poolObj => {
+        poolObj.pool.forEach(a => {
+          a.muted = true;
+          a.play().then(() => {
+            a.pause();
+            a.currentTime = 0;
+            a.muted = false;
+          }).catch(() => {
+            a.muted = false;
+          });
+        });
+      });
+    } else if (audioCtx.state === 'suspended') {
       audioCtx.resume().catch(() => {});
     }
   }
@@ -154,6 +193,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (globalSoundToggle && !globalSoundToggle.checked) return;
     if (!audioUnlocked) return;
     
+    if (useFallback) {
+      const poolObj = fallbackAudioPools[type];
+      if (!poolObj) return;
+      const a = poolObj.pool[poolObj.index];
+      a.currentTime = 0;
+      a.play().catch(() => {});
+      poolObj.index = (poolObj.index + 1) % poolObj.pool.length;
+      return;
+    }
+
     // Auto-resume if it fell back asleep (e.g. iOS backgrounding)
     if (audioCtx.state === 'suspended') {
       audioCtx.resume().catch(() => {});
