@@ -100,7 +100,19 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const response = await fetch(config.url);
         const arrayBuffer = await response.arrayBuffer();
-        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        
+        // Safari compatibility for decodeAudioData
+        const audioBuffer = await new Promise((resolve, reject) => {
+          const promise = audioCtx.decodeAudioData(
+            arrayBuffer,
+            (decoded) => resolve(decoded),
+            (err) => reject(err)
+          );
+          if (promise !== undefined) {
+            promise.then(resolve).catch(reject);
+          }
+        });
+        
         audioBuffers[key] = { buffer: audioBuffer, vol: config.vol };
       } catch (e) {
         console.error(`Failed to load audio: ${key}`, e);
@@ -110,10 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
   loadAudio();
 
   function unlockAudio() {
-    if (audioUnlocked) return;
     audioUnlocked = true;
     if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
+      audioCtx.resume().catch(() => {});
     }
   }
 
@@ -132,15 +143,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  window.addEventListener('mousedown', unlockAudio, { once: true });
-  window.addEventListener('touchstart', unlockAudio, { once: true });
-  window.addEventListener('keydown', unlockAudio, { once: true });
+  window.addEventListener('mousedown', unlockAudio);
+  window.addEventListener('touchstart', unlockAudio, { passive: true });
+  window.addEventListener('pointerdown', unlockAudio, { passive: true });
+  window.addEventListener('keydown', unlockAudio);
 
   const globalSoundToggle = document.getElementById('globalSoundToggle');
 
   function playSound(type) {
     if (globalSoundToggle && !globalSoundToggle.checked) return;
-    if (!audioUnlocked || audioCtx.state === 'suspended') return;
+    if (!audioUnlocked) return;
+    
+    // Auto-resume if it fell back asleep (e.g. iOS backgrounding)
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(() => {});
+    }
+
     const sound = audioBuffers[type];
     if (!sound) return;
 
