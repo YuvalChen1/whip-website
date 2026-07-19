@@ -122,10 +122,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const entryOverlay = document.getElementById('entry-overlay');
   const entryButton = document.getElementById('entry-button');
 
+  if (entryOverlay) {
+    document.body.style.overflow = 'hidden'; // Prevent scroll while overlay is active
+  }
+
   if (entryButton) {
     entryButton.addEventListener('click', () => {
       unlockAudio();
       entryOverlay.classList.add('hidden');
+      document.body.style.overflow = ''; // Restore scroll
     });
   }
 
@@ -154,8 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Constants matching extension ---
-  const CRACK_SPD = 32;       // Tip speed threshold (extension: 32)
-  const JERK_THRESH = 18;     // Speed threshold for direction reversal flick
+  const CRACK_SPD = 22;       // Tip speed threshold
+  const JERK_THRESH = 12;     // Speed threshold for direction reversal flick
   const HANDLE_LEN = 40;      // Rigid handle length
   const N = 50;               // Number of rope segments
   const GRAV = 0.38;
@@ -350,7 +355,12 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('touchstart', (e) => {
     isTouching = true;
     unlockAudio();
-    globalCursor.style.opacity = '1';
+    
+    if (currentCursorMode === 'swatter' || currentCursorMode === 'watergun' || currentCursorMode === 'fish') {
+      globalCursor.style.opacity = '0';
+    } else {
+      globalCursor.style.opacity = '1';
+    }
     
     // Teleport without velocity spike
     mouse.x = e.touches[0].clientX;
@@ -401,8 +411,8 @@ document.addEventListener('DOMContentLoaded', () => {
     { selector: '.section-premium', mode: 'electric' },
     { selector: '.section-achievements', mode: 'diamond' },
     { selector: '.section-cta', mode: 'watergun' },
-    { selector: '.section-footer', mode: 'leather' },
-    { selector: '.footer-bottom', mode: 'fish' }
+    { selector: '.footer-bottom', mode: 'fish' },
+    { selector: '.section-footer', mode: 'leather' }
   ];
 
   let cachedSections = [];
