@@ -107,10 +107,14 @@ document.addEventListener('DOMContentLoaded', () => {
     audioUnlocked = true;
     Object.values(audioPools).forEach(poolObj => {
       poolObj.pool.forEach(a => {
+        a.muted = true;
         a.play().then(() => {
           a.pause();
           a.currentTime = 0;
-        }).catch(() => {});
+          a.muted = false;
+        }).catch(() => {
+          a.muted = false;
+        });
       });
     });
   }
@@ -300,6 +304,91 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('mouseenter', () => {
     globalCursor.style.opacity = '1';
+  });
+
+  // --- Touch Simulation for Mobile ---
+  let isTouching = false;
+
+  function updateTouchPosition(e) {
+    if (e.touches.length > 0) {
+      mouse.x = e.touches[0].clientX;
+      mouse.y = e.touches[0].clientY;
+
+      mVel.x = mouse.x - lastMouse.x;
+      mVel.y = mouse.y - lastMouse.y;
+      sVel.x = sVel.x * 0.7 + mVel.x * 0.3;
+      sVel.y = sVel.y * 0.7 + mVel.y * 0.3;
+
+      globalGraphic.style.left = `${mouse.x}px`;
+      globalGraphic.style.top = `${mouse.y}px`;
+
+      if (!isWhipMode(currentCursorMode)) {
+        if (currentCursorMode === 'fish') {
+          updateFishRotation(sVel.x, sVel.y);
+        }
+      }
+
+      // Interactive morph checks
+      const hoverTarget = document.elementFromPoint(mouse.x, mouse.y)?.closest('a, button, select, input, textarea, label, [role="button"], .selector-btn, .tab, .mockup-pill, .mockup-toggle-btn');
+      if (hoverTarget) {
+        globalCursor.classList.add('hovering-interactive');
+        if (currentCursorMode === 'electric' || currentCursorMode === 'diamond' || currentCursorMode === 'watergun') {
+          globalCursor.classList.add('premium-dot');
+        } else {
+          globalCursor.classList.remove('premium-dot');
+        }
+      } else {
+        globalCursor.classList.remove('hovering-interactive');
+        globalCursor.classList.remove('premium-dot');
+      }
+
+      lastMouse.x = mouse.x;
+      lastMouse.y = mouse.y;
+    }
+  }
+
+  window.addEventListener('touchstart', (e) => {
+    isTouching = true;
+    unlockAudio();
+    globalCursor.style.opacity = '1';
+    
+    // Teleport without velocity spike
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+    lastMouse.x = mouse.x;
+    lastMouse.y = mouse.y;
+    mVel.x = 0; mVel.y = 0;
+    sVel.x = 0; sVel.y = 0;
+    
+    // Teleport whip anchor to prevent massive initial spring force
+    if (isWhipMode(currentCursorMode) && pts.length > 0) {
+      const h = getHandle(mouse.x, mouse.y);
+      for(let i=0; i<N; i++) {
+        pts[i].x = h.topX; pts[i].y = h.topY + i * SEG;
+        prv[i].x = h.topX; prv[i].y = h.topY + i * SEG;
+      }
+    }
+
+    updateTouchPosition(e);
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (isTouching) {
+      updateTouchPosition(e);
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchend', () => {
+    isTouching = false;
+    globalCursor.style.opacity = '0';
+    if (globalCtx) {
+      globalCtx.clearRect(0, 0, globalCanvas.width, globalCanvas.height);
+    }
+  });
+
+  window.addEventListener('touchcancel', () => {
+    isTouching = false;
+    globalCursor.style.opacity = '0';
   });
 
   const sections = [
