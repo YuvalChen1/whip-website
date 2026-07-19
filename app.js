@@ -398,10 +398,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const sections = [
     { selector: '.section-hero', mode: 'bw' },
     { selector: '.section-features', mode: 'fire' },
-    { selector: '.section-premium', mode: 'diamond' },
-    { selector: '.section-achievements', mode: 'fish' },
+    { selector: '.section-premium', mode: 'electric' },
+    { selector: '.section-achievements', mode: 'diamond' },
     { selector: '.section-cta', mode: 'watergun' },
-    { selector: '.section-footer', mode: 'leather' }
+    { selector: '.section-footer', mode: 'leather' },
+    { selector: '.footer-bottom', mode: 'fish' }
   ];
 
   let cachedSections = [];
@@ -454,7 +455,13 @@ document.addEventListener('DOMContentLoaded', () => {
       initGlobalRope();
     } else {
       globalCanvas.style.display = 'none';
-      globalGraphic.style.display = 'block';
+      
+      // Hide swatter and watergun graphics entirely on mobile, but keep logic
+      if (isTouching && (mode === 'swatter' || mode === 'watergun' || mode === 'fish')) {
+        globalGraphic.style.display = 'none';
+      } else {
+        globalGraphic.style.display = 'block';
+      }
       
       if (mode === 'swatter') {
         globalGraphic.style.backgroundImage = "url('assets/swatter.svg')";
@@ -1210,16 +1217,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Global Interaction Effects ---
   window.addEventListener('pointerdown', (e) => {
+    const isTouch = e.pointerType === 'touch' || isTouching;
+
     if (currentCursorMode === 'watergun') {
       playSound('watergun');
       const clickX = e.clientX;
       const clickY = e.clientY;
-      globalGraphic.style.transition = 'transform 0.05s ease-out';
-      globalGraphic.style.transform = `translate(-32px, -16px) translateY(8px) scale(0.92)`;
-      setTimeout(() => {
-        globalGraphic.style.transition = 'none';
-        updateGraphicScaling();
-      }, 120);
+      
+      if (!isTouch) {
+        globalGraphic.style.transition = 'transform 0.05s ease-out';
+        globalGraphic.style.transform = `translate(-32px, -16px) translateY(8px) scale(0.92)`;
+        setTimeout(() => {
+          globalGraphic.style.transition = 'none';
+          updateGraphicScaling();
+        }, 120);
+      }
 
       for (let i = 0; i < 5; i++) {
         const drop = document.createElement('div');
@@ -1274,14 +1286,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       // Scale/wobble the fish to simulate bite
-      globalGraphic.style.transition = 'transform 0.05s ease-out';
-      globalGraphic.style.transform = `translate(-32px, -32px) scale(1.3) rotate(${fishAngle - 20}deg)`;
-      setTimeout(() => {
-        globalGraphic.style.transition = 'none';
-        updateGraphicScaling();
-      }, 100);
+      if (!isTouch) {
+        globalGraphic.style.transition = 'transform 0.05s ease-out';
+        globalGraphic.style.transform = `translate(-32px, -32px) scale(1.3) rotate(${fishAngle - 20}deg)`;
+        setTimeout(() => {
+          globalGraphic.style.transition = 'none';
+          updateGraphicScaling();
+        }, 100);
+      }
     } else if (currentCursorMode === 'swatter') {
-      runGlobalSwat(e.clientX, e.clientY);
+      runGlobalSwat(e.clientX, e.clientY, isTouch);
     }
   });
 
@@ -1360,14 +1374,16 @@ document.addEventListener('DOMContentLoaded', () => {
     globalFlies = [];
   }
 
-  function runGlobalSwat(x, y) {
-    playSound('swatter');
-    globalGraphic.style.transition = 'transform 0.05s ease-out';
-    globalGraphic.style.transform = `translate(-32px, -32px) scale(0.7) rotate(-20deg)`;
-    setTimeout(() => {
-      globalGraphic.style.transition = 'none';
-      updateGraphicScaling();
-    }, 120);
+  function runGlobalSwat(x, y, isTouch = false) {
+    if (!isTouch) {
+      playSound('swatter');
+      globalGraphic.style.transition = 'transform 0.05s ease-out';
+      globalGraphic.style.transform = `translate(-32px, -32px) scale(0.7) rotate(-20deg)`;
+      setTimeout(() => {
+        globalGraphic.style.transition = 'none';
+        updateGraphicScaling();
+      }, 120);
+    }
 
     const hitSize = 55;
     const surviving = [];
