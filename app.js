@@ -367,6 +367,20 @@ document.addEventListener('DOMContentLoaded', () => {
         pts[i].x = h.topX; pts[i].y = h.topY + i * SEG;
         prv[i].x = h.topX; prv[i].y = h.topY + i * SEG;
       }
+      prevTip = { x: pts[N-1].x, y: pts[N-1].y };
+    }
+
+    // Trigger tap interaction for non-whip cursors
+    if (currentCursorMode === 'swatter') {
+      runGlobalSwat(mouse.x, mouse.y);
+    } else if (currentCursorMode === 'watergun' || currentCursorMode === 'fish') {
+      // Simulate mousedown
+      const event = new MouseEvent('mousedown', {
+        clientX: mouse.x,
+        clientY: mouse.y,
+        bubbles: true
+      });
+      window.dispatchEvent(event);
     }
 
     updateTouchPosition(e);
@@ -392,10 +406,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const sections = [
-    { selector: '.hero', mode: 'swatter' },
-    { selector: '.section-playground', mode: 'playground' },
-    { selector: '.section-how-it-works', mode: 'bw' },
+    { selector: '.section-hero', mode: 'swatter' },
+    { selector: '.section-features', mode: 'fire' },
     { selector: '.section-premium', mode: 'diamond' },
+    { selector: '.section-achievements', mode: 'fish' },
+    { selector: '.section-cta', mode: 'watergun' },
     { selector: '.section-footer', mode: 'leather' }
   ];
 
