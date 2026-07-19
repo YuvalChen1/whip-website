@@ -78,45 +78,43 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- Audio System ---
+  // --- Audio System (Web Audio API) ---
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const audioCtx = new AudioContext();
   let audioUnlocked = false;
-  
-  function createAudioPool(src, size, volume = 1.0) {
-    const pool = [];
-    for (let i = 0; i < size; i++) {
-      const a = new Audio(src);
-      a.volume = volume;
-      a.preload = 'auto';
-      pool.push(a);
-    }
-    return { pool, index: 0 };
-  }
 
-  const audioPools = {
-    whip: createAudioPool('assets/sounds/whip.mp3', 6, 0.7),
-    fire: createAudioPool('assets/sounds/fire.wav', 4, 0.4),
-    electric: createAudioPool('assets/sounds/electric.wav', 4, 0.8),
-    diamond: createAudioPool('assets/sounds/diamond.wav', 4, 0.8),
-    watergun: createAudioPool('assets/sounds/watergun.wav', 4, 0.8),
-    swatter: createAudioPool('assets/sounds/swatter.wav', 4, 0.8),
-    fly: createAudioPool('assets/sounds/fly.wav', 4, 0.8)
+  const audioBuffers = {};
+  
+  const audioSources = {
+    whip: { url: 'assets/sounds/whip.mp3', vol: 0.7 },
+    fire: { url: 'assets/sounds/fire.wav', vol: 0.4 },
+    electric: { url: 'assets/sounds/electric.wav', vol: 0.8 },
+    diamond: { url: 'assets/sounds/diamond.wav', vol: 0.8 },
+    watergun: { url: 'assets/sounds/watergun.wav', vol: 0.8 },
+    swatter: { url: 'assets/sounds/swatter.wav', vol: 0.8 },
+    fly: { url: 'assets/sounds/fly.wav', vol: 0.8 }
   };
+
+  async function loadAudio() {
+    for (const [key, config] of Object.entries(audioSources)) {
+      try {
+        const response = await fetch(config.url);
+        const arrayBuffer = await response.arrayBuffer();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        audioBuffers[key] = { buffer: audioBuffer, vol: config.vol };
+      } catch (e) {
+        console.error(`Failed to load audio: ${key}`, e);
+      }
+    }
+  }
+  loadAudio();
 
   function unlockAudio() {
     if (audioUnlocked) return;
     audioUnlocked = true;
-    Object.values(audioPools).forEach(poolObj => {
-      poolObj.pool.forEach(a => {
-        a.muted = true;
-        a.play().then(() => {
-          a.pause();
-          a.currentTime = 0;
-          a.muted = false;
-        }).catch(() => {
-          a.muted = false;
-        });
-      });
-    });
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
   }
 
   const entryOverlay = document.getElementById('entry-overlay');
@@ -142,13 +140,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function playSound(type) {
     if (globalSoundToggle && !globalSoundToggle.checked) return;
-    if (!audioUnlocked) return;
-    const poolObj = audioPools[type];
-    if (!poolObj) return;
-    const a = poolObj.pool[poolObj.index];
-    a.currentTime = 0;
-    a.play().catch(() => {});
-    poolObj.index = (poolObj.index + 1) % poolObj.pool.length;
+    if (!audioUnlocked || audioCtx.state === 'suspended') return;
+    const sound = audioBuffers[type];
+    if (!sound) return;
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = sound.buffer;
+    
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.value = sound.vol;
+    
+    source.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    source.start(0);
   }
 
   function playWhipCrack() {
